@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    /* Reset default browser styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Body: Full screen gradient background, centered content */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #75a17e 0%, #457c70 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    /* Main game container: White box with shadow */
+    .game-container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 700px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Title styling */
+    h1 {
+        text-align: center;
+        color: #000000;
+        margin-bottom: 10px;
+        font-size: 2.2em;
+    }
+    h2{
+        text-align: center;
+        color: #000000;
+        margin-bottom: 10px;
+        font-size: 2.2em;
+    }
+
+
+    /* Score display */
+    .score {
+        text-align: center;
+        font-size: 1.3em;
+        color: #666;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    .score span {
+        color: #696969;
+        font-weight: bold;
+    }
+
+    /* Accuracy percentage */
+    .accuracy {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #666;
+        font-size: 1em;
+    }
+
+    /* Play button section */
+    .play-section {
+        text-align: center;
+        margin-bottom: 40px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    /* Play chord button */
+    .play-button {
+        background: linear-gradient(135deg, #29a867 0%, #6cc774 100%);
+        color: white;
+        border: none;
+        padding: 20px 50px;
+        font-size: 1.3em;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        font-weight: bold;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .play-button:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
+    }
+
+    .play-button:active:not(:disabled) {
+        transform: translateY(-1px);
+    }
+
+    .play-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Reset button */
+    .reset-button {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.3em;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        font-weight: bold;
+        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+    }
+
+    .reset-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.5);
+        background: #dc2626;
+    }
+
+    /* Guess section */
+    .guess-section {
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 1.2em;
+        color: #333;
+        margin-bottom: 20px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    /* Grid for chord buttons: 4 columns */
+    .chord-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    /* Individual chord buttons */
+    .chord-btn {
+        padding: 18px;
+        border: 2px solid #ddd;
+        background: white;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .chord-btn:hover:not(:disabled) {
+        border-color: #667eea;
+        background: #f0f4ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    /* When correct answer */
+    .chord-btn.correct {
+        background: #10b981;
+        color: white;
+        border-color: #10b981;
+        animation: correctPulse 0.5s;
+    }
+
+    /* When incorrect answer */
+    .chord-btn.incorrect {
+        background: #ef4444;
+        color: white;
+        border-color: #ef4444;
+        animation: shake 0.5s;
+    }
+
+    .chord-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Animation for correct answer */
+    @keyframes correctPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    /* Animation for incorrect answer */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    /* Feedback message box */
+    .feedback {
+        margin-top: 25px;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2em;
+        animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback.correct {
+        background: #d1fae5;
+        color: #065f46;
+        border: 2px solid #10b981;
+    }
+
+    .feedback.incorrect {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 2px solid #ef4444;
+    }
+
+    /* Next button */
+    .next-btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1.1em;
+        font-weight: bold;
+        width: 100%;
+        margin-top: 15px;
+        transition: all 0.3s;
+    }
+
+    .next-btn:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+    }
+
+    /* Game over container */
+    #gameOverContainer {
+        margin-top: 30px;
+        padding: 30px;
+        background: #f0f4ff;
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    #gameOverContainer h2 {
+        color: #667eea;
+        margin-bottom: 15px;
+        font-size: 2em;
+    }
+
+    #gameOverContainer p {
+        font-size: 1.2em;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* Hidden class */
+    .hidden {
+        display: none;
+    }
+
+    /* Responsive design for mobile */
+    @media (max-width: 600px) {
+        .chord-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        h1 {
+            font-size: 1.8em;
+        }
+        
+        .play-button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+        }
+    }
+</style>
+</head>
+<body>
+    <!--coding the game-->
+    <div class = "game-container">
+        <!--Header Title-->
+        <h1>🎸Chord Guessing Game </h1>
+        <h2> Test your ear training skills!:D </h2>
+
+        <!--score display-->
+        <div class="score">
+            Score : <span id="correct">0</span> / <span id = "total">20</span> 
+        </div>
+        <!--accuracy percentage-->
+        <div class="accuracy" id ="accuracy"></div>
+        <!--play button-->
+        <div class="play-section">
+            <button class ="play-button" id="playBtn">🎵Play Chord</button>
+            <button class="reset-button" id="resetBtn">🔄 Reset Score</button>
+        </div>
+        <!-- Chord selection section -->
+        <div class="guess-section">
+            <div class="section-title">Select the chord you hear:</div>
+            <div class="chord-grid" id="chordGrid">
+                <!-- Chord buttons will be generated by JavaScript -->
+            </div>
+            
+        </div>
+
+        <!-- Feedback section (populated by JavaScript) -->
+        <div id="feedbackContainer"></div>
+        <!-- Game over section (hidden initially, shown when 20 tries reached) -->
+        <div id="gameOverContainer" class="hidden">
+            <!-- Will be populated by JavaScript when game ends -->
+        </div>
+
+    </div>
+    <script>
+    // PART 1: DEFINING OUR CHORD DATA
+    // ================================
+  
+    
+    const CHORDS = {
+        'C': { root: 130.81, notes: [130.81, 164.81, 196.00] },
+        'C#': { root: 138.59, notes: [138.59, 174.61, 207.65] },
+        'D': { root: 146.83, notes: [146.83, 185.00, 220.00] },
+        'Eb': { root: 155.56, notes: [155.56, 196.00, 233.08] },
+        'E': { root: 164.81, notes: [164.81, 207.65, 246.94] },
+        'F': { root: 174.61, notes: [174.61, 220.00, 261.63] },
+        'F#': { root: 185.00, notes: [185.00, 233.08, 277.18] },
+        'G': { root: 196.00, notes: [196.00, 246.94, 293.66] },
+        'Ab': { root: 207.65, notes: [207.65, 261.63, 311.13] },
+        'A': { root: 220.00, notes: [220.00, 277.18, 329.63] },
+        'Bb': { root: 233.08, notes: [233.08, 293.66, 349.23] },
+        'B': { root: 246.94, notes: [246.94, 311.13, 369.99] }
+    };
+    
+    
+    
+    let currentChord = null;        
+                                     
+    
+    let correctCount = 0;            
+    
+    let attemptCount = 0;            
+    
+    const MAX_ATTEMPTS = 20;         
+    
+    let hasGuessed = false;          // Did the player guess this round?
+                                     
+    
+    let audioContext = null;         
+    
+    
+  
+    
+    function createChordButtons() {
+       
+        const grid = document.getElementById('chordGrid');
+        
+        
+        grid.innerHTML = '';
+        
+       
+        Object.keys(CHORDS).forEach(function(chordName) {
+            // This code runs 12 times, once for each chord
+            
+            // Create a new button element
+            const button = document.createElement('button');
+            
+            // Add the CSS class to style it
+            button.className = 'chord-btn';
+            
+            // Set the text inside the button
+            button.textContent = chordName;  // 'C', 'C#', etc.
+            
+            // Add a click event - what happens when clicked?
+            button.onclick = function() {
+                handleGuess(chordName, button);
+            };
+            
+            // Add this button to the grid
+            grid.appendChild(button);
+        });
+    }
+     
+    
+    
+    function handleGuess(guessedChord, button) {
+        // guessedChord = which chord they clicked (e.g., 'C', 'D#')
+        // button = the actual button element they clicked
+        
+        // Step 1: Check if they already guessed or if there's no chord playing
+        if (hasGuessed || !currentChord) {
+            return;  // Exit the function early - do nothing
+        }
+        
+        // Step 2: Mark that they've guessed (prevent multiple clicks)
+        hasGuessed = true;
+        
+        // Step 3: Increase the attempt counter
+        attemptCount++;
+        
+        // Step 4: Disable all buttons (can't click anymore this round)
+        const allButtons = document.querySelectorAll('.chord-btn');
+        allButtons.forEach(function(btn) {
+            btn.disabled = true;
+        });
+        
+        // Step 5: Check if the guess is correct
+        const isCorrect = (guessedChord === currentChord);
+        
+        // Step 6: Update score if correct
+        if (isCorrect) {
+            correctCount++;  // Increase correct count
+            button.classList.add('correct');  // Make button green
+            showFeedback(true, '🎉 Correct! It was ' + currentChord + ' major');
+        } else {
+            // If wrong, show which was correct
+            button.classList.add('incorrect');  // Make clicked button red
+            
+            // Find and highlight the correct button in green
+            allButtons.forEach(function(btn) {
+                if (btn.textContent === currentChord) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            showFeedback(false, '❌ Incorrect. The correct answer was ' + currentChord + ' major');
+        }
+        
+        // Step 7: Update the score display
+        updateScore();
+        
+        // Step 8: Check if game is over (20 attempts reached)
+        if (attemptCount >= MAX_ATTEMPTS) {
+            showGameOver();
+        }
+    }
+    createChordButtons(); // Call the function to create buttons when page loads
+    
+    
+    // PART 5: SHOWING FEEDBACK
+    // =========================
+    
+    function showFeedback(isCorrect, message) {
+        // isCorrect = true or false (boolean)
+        // message = the text to display
+        
+        // Step 1: Get the feedback container
+        const container = document.getElementById('feedbackContainer');
+        
+        // Step 2: Create the HTML for feedback message and next button
+        // We use template literals (backticks `) to easily mix HTML and variables
+        container.innerHTML = `
+            <div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">
+                ${message}
+            </div>
+            <button class="next-btn" onclick="nextRound()">Next Chord →</button>
+        `;
+        
+        
+    }
+    
+   
+    // PART 6: UPDATE SCORE DISPLAY
+    // =============================
+    
+    function updateScore() {
+        // Step 1: Update the correct count display
+        document.getElementById('correct').textContent = correctCount;
+        
+        // Step 2: Update the total attempts display
+        // We show attemptCount out of MAX_ATTEMPTS (20)
+        document.getElementById('total').textContent = MAX_ATTEMPTS;
+        
+        // Step 3: Calculate and show accuracy percentage
+        if (attemptCount > 0) {
+            // Calculate percentage: (correct / total) * 100
+            const accuracy = Math.round((correctCount / attemptCount) * 100);
+            
+            // Display it
+            document.getElementById('accuracy').textContent = 'Accuracy: ' + accuracy + '%';
+        }
+    }
+    
+    
+    
+    // PART 7: SELECT RANDOM CHORD
+    // ============================
+    
+    function selectRandomChord() {
+        // Step 1: Get all chord names as an array
+        const chordNames = Object.keys(CHORDS);
+        // Result: ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
+        
+        // Step 2: Generate a random number between 0 and 11
+        // Math.random() gives a decimal between 0 and 0.999...
+        // Multiply by 12 gives: 0 to 11.999...
+        // Math.floor() rounds DOWN to integer: 0, 1, 2, ... 11
+        const randomIndex = Math.floor(Math.random() * chordNames.length);
+        
+        // Step 3: Return the chord name at that random position
+        return chordNames[randomIndex];
+    }
+    
+    
+    
+   
+    // PART 8: INITIALIZE AUDIO CONTEXT
+    // =================================
+    
+    function initAudio() {
+        // Audio context is like a "sound studio" in the browser
+        // We only create it once (when user first interacts)
+        
+        if (!audioContext) {
+            // Create the audio context
+            // Different browsers use different names, so we check both
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        return audioContext;
+    }
+    
+    
+    // PART 8B: PLAY CHORD FUNCTION
+    // =============================
+    
+    function playChord(chordName) {
+        // Get the audio context (our sound studio)
+        const ctx = initAudio();
+        
+        // Get the chord data (frequencies of notes)
+        const chord = CHORDS[chordName];
+        
+        // Get current time in the audio timeline
+        const now = ctx.currentTime;
+        
+        // How long should the chord play? 2 seconds
+        const duration = 2.0;
+        
+        // Loop through each note in the chord (usually 3 notes)
+        chord.notes.forEach(function(frequency, index) {
+            // For each note, we create sound generators
+            
+            // Step 1: Create an oscillator (sound wave generator)
+            const oscillator = ctx.createOscillator();
+            
+            // Step 2: Create a gain node (volume controller)
+            const gainNode = ctx.createGain();
+            
+            // Step 3: Set oscillator type to 'sawtooth' for guitar-like sound
+            // Types: 'sine' (pure tone), 'square' (harsh), 'sawtooth' (guitar-like), 'triangle' (mellow)
+            oscillator.type = 'sawtooth';
+            
+            // Step 4: Set the frequency (pitch) of this note
+            oscillator.frequency.setValueAtTime(frequency, now);
+            
+            // Step 5: ADSR Envelope - makes it sound more realistic
+            // A = Attack (how fast sound starts)
+            // D = Decay (how fast it drops from peak)
+            // S = Sustain (steady level while held)
+            // R = Release (how fast it fades out)
+            
+            const attack = 0.01;    // 10 milliseconds to reach peak
+            const decay = 0.1;      // 100 milliseconds to drop to sustain
+            const sustain = 0.7;    // Sustain at 70% of peak volume
+            const release = 0.3;    // 300 milliseconds to fade out
+            
+            // Apply the envelope to volume
+            gainNode.gain.setValueAtTime(0, now);  // Start at 0 volume
+            gainNode.gain.linearRampToValueAtTime(0.15, now + attack);  // Attack to peak
+            gainNode.gain.linearRampToValueAtTime(sustain * 0.15, now + attack + decay);  // Decay
+            gainNode.gain.setValueAtTime(sustain * 0.15, now + duration - release);  // Sustain
+            gainNode.gain.linearRampToValueAtTime(0, now + duration);  // Release to 0
+            
+            // Step 6: Connect the audio nodes (like plugging cables)
+            // oscillator → gainNode → speakers
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);  // destination = speakers
+            
+            // Step 7: Start and stop the sound
+            oscillator.start(now);           // Start playing NOW
+            oscillator.stop(now + duration); // Stop after 2 seconds
+        });
+    }
+    // PART 10: NEXT ROUND FUNCTION
+    function nextRound() {
+        currentChord = selectRandomChord();
+        hasGuessed = false;
+        document.getElementById('feedbackContainer').innerHTML = '';
+        
+        const allButtons = document.querySelectorAll('.chord-btn');
+        allButtons.forEach(function(btn) {
+            btn.disabled = false;
+            btn.classList.remove('correct', 'incorrect');
+        });
+        
+        document.getElementById('playBtn').disabled = false;
+    }
+    
+    // PART 11: RESET GAME FUNCTION
+    function resetGame() {
+        correctCount = 0;
+        attemptCount = 0;
+        updateScore();
+        document.getElementById('gameOverContainer').classList.add('hidden');
+        nextRound();
+    }
+    
+    // PART 12: GAME OVER FUNCTION
+    function showGameOver() {
+        const finalAccuracy = Math.round((correctCount / MAX_ATTEMPTS) * 100);
+        const container = document.getElementById('gameOverContainer');
+        
+        container.innerHTML = `
+            <h2>🎉 Game Over!</h2>
+            <p>Final Score: ${correctCount} / ${MAX_ATTEMPTS}</p>
+            <p>Accuracy: ${finalAccuracy}%</p>
+            <button class="next-btn" onclick="resetGame()">Play Again</button>
+        `;
+        
+        container.classList.remove('hidden');
+        document.getElementById('playBtn').disabled = true;
+        
+        document.querySelectorAll('.chord-btn').forEach(function(btn) {
+            btn.disabled = true;
+        });
+    }
+    
+
+    window.addEventListener('DOMContentLoaded', function() {
+        
+        // Now all HTML elements exist, safe to access them!
+        
+        // PART 9: PLAY CHORD BUTTON EVENT
+        const playButton = document.getElementById('playBtn');
+        playButton.addEventListener('click', function() {
+            if (currentChord) {
+                playChord(currentChord);
+            }
+        });
+        
+        // PART 11: RESET BUTTON EVENT
+        const resetButton = document.getElementById('resetBtn');
+        resetButton.addEventListener('click', function() {
+            resetGame();
+        });
+        
+        // PART 13: INITIALIZE THE GAME
+        createChordButtons();
+        nextRound();
+        
+    }); // Close DOMContentLoaded
+
+</script>
+
+</body>
+</html>
+    
