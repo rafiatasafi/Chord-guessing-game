@@ -275,6 +275,42 @@
     .hidden {
         display: none;
     }
+    /* Character styling */
+    .character-container {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .character {
+        width: 150px;
+        height: 150px;
+        object-fit: contain;
+        transition: all 0.3s ease;
+        animation: fadeIn 0.5s;
+    }
+
+    .character:hover {
+        transform: scale(1.05);
+    }
+
+    .character-message {
+        margin-top: 10px;
+        font-size: 1.1em;
+        color: #333;
+        font-weight: 600;
+        min-height: 30px;
+        transition: all 0.3s ease;
+    }
+
+    /* Bounce animation for correct answer */
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    .character.bounce {
+        animation: bounce 0.6s;
+    }
 
     /* Responsive design for mobile */
     @media (max-width: 600px) {
@@ -298,7 +334,14 @@
     <div class = "game-container">
         <!--Header Title-->
         <h1>🎸Chord Guessing Game </h1>
-        <h2> Test your ear training skills!:D </h2>
+        <h2> Test your ear's power! </h2>
+        <!-- ADD THIS NEW SECTION -->
+        <div class="character-container">
+            <img id="characterImg" src="images/happy.png" alt="Character" class="character">
+            <div id="characterMessage" class="character-message">Ready to play!</div>
+        </div>
+
+
 
         <!--score display-->
         <div class="score">
@@ -420,27 +463,34 @@
             btn.disabled = true;
         });
         
-        // Step 5: Check if the guess is correct
-        const isCorrect = (guessedChord === currentChord);
-        
-        // Step 6: Update score if correct
-        if (isCorrect) {
-            correctCount++;  // Increase correct count
-            button.classList.add('correct');  // Make button green
-            showFeedback(true, '🎉 Correct! It was ' + currentChord + ' major');
-        } else {
-            // If wrong, show which was correct
-            button.classList.add('incorrect');  // Make clicked button red
-            
-            // Find and highlight the correct button in green
-            allButtons.forEach(function(btn) {
-                if (btn.textContent === currentChord) {
-                    btn.classList.add('correct');
-                }
-            });
-            
-            showFeedback(false, '❌ Incorrect. The correct answer was ' + currentChord + ' major');
+       // Step 5: Check if the guess is correct
+const isCorrect = (guessedChord === currentChord);
+
+if (isCorrect) {
+    correctCount++;
+    button.classList.add('correct');
+    updateCharacter('happy', '🎉 Amazing! You got it right!');
+    showFeedback(true, '🎉 Correct! It was ' + currentChord + ' major');
+} else {
+    // If wrong, show which was correct
+    button.classList.add('incorrect');
+    
+    // Find and highlight the correct button in green
+    allButtons.forEach(function(btn) {
+        if (btn.textContent === currentChord) {
+            btn.classList.add('correct');
         }
+    });
+    
+    // Generate intelligent hint based on music theory
+    const hintData = generateHint(guessedChord, currentChord);
+    
+    // Update character with appropriate expression
+    updateCharacter(hintData.expression, hintData.hint);
+    
+    // Show feedback with the hint
+    showFeedback(false, '❌ Incorrect. ' + hintData.hint);
+}
         
         // Step 7: Update the score display
         updateScore();
@@ -641,7 +691,121 @@
             btn.disabled = true;
         });
     }
+    // PART 14: CHARACTER EXPRESSION FUNCTIONS
+    // ========================================
+
+    function updateCharacter(expression, message) {
+        const characterImg = document.getElementById('characterImg');
+        const characterMessage = document.getElementById('characterMessage');
+        
+        // Change the image
+        characterImg.src = `images/${expression}.png`;
+        
+        // Update message
+        characterMessage.textContent = message;
+        
+        // Add bounce animation for happy
+        if (expression === 'happy') {
+            characterImg.classList.add('bounce');
+            setTimeout(() => characterImg.classList.remove('bounce'), 600);
+        }
+    }
+    // PART 15: MUSIC THEORY HINT SYSTEM
+// ==================================
+
+function getSemitoneDistance(chord1, chord2) {
+    // Map each chord to its semitone position (C = 0)
+    const semitoneMap = {
+        'C': 0, 'C#': 1, 'D': 2, 'Eb': 3, 'E': 4, 'F': 5,
+        'F#': 6, 'G': 7, 'Ab': 8, 'A': 9, 'Bb': 10, 'B': 11
+    };
     
+    const pos1 = semitoneMap[chord1];
+    const pos2 = semitoneMap[chord2];
+    
+    // Calculate shortest distance (accounting for circular nature)
+    const distance = Math.abs(pos1 - pos2);
+    return Math.min(distance, 12 - distance);
+}
+
+function getIntervalName(semitones) {
+    const intervals = {
+        0: 'unison',
+        1: 'minor 2nd',
+        2: 'major 2nd',
+        3: 'minor 3rd',
+        4: 'major 3rd',
+        5: 'perfect 4th',
+        6: 'tritone',
+        7: 'perfect 5th',
+        8: 'minor 6th',
+        9: 'major 6th',
+        10: 'minor 7th',
+        11: 'major 7th'
+    };
+    return intervals[semitones] || 'unknown';
+}
+
+function countSharedNotes(chord1, chord2) {
+    const notes1 = CHORDS[chord1].notes;
+    const notes2 = CHORDS[chord2].notes;
+    
+    let sharedCount = 0;
+    
+    // Check each note in chord1 against chord2
+    notes1.forEach(freq1 => {
+        notes2.forEach(freq2 => {
+            // Notes are the same if within 1 Hz (accounting for floating point)
+            if (Math.abs(freq1 - freq2) < 1) {
+                sharedCount++;
+            }
+        });
+    });
+    
+    return sharedCount;
+}
+
+function generateHint(guessed, correct) {
+    const distance = getSemitoneDistance(guessed, correct);
+    const sharedNotes = countSharedNotes(guessed, correct);
+    const interval = getIntervalName(distance);
+    
+    let hint = '';
+    let expression = 'thinking';
+    
+    // VERY CLOSE - 1 semitone away
+    if (distance === 1) {
+        hint = `💡 So close! You were only one half-step away! ${guessed} is just 1 semitone from ${correct}.`;
+        expression = 'lightbulb';
+    }
+    // Close - 2 semitones
+    else if (distance === 2) {
+        hint = `💡 You're close! You were 2 semitones (a whole step) away from ${correct}.`;
+        expression = 'lightbulb';
+    }
+    // Perfect 5th relationship (dominant)
+    else if (distance === 7) {
+        hint = `🎵 Interesting! You heard the dominant (perfect 5th) of ${correct}. ${guessed} and ${correct} are closely related!`;
+        expression = 'lightbulb';
+    }
+    // Perfect 4th relationship (subdominant)
+    else if (distance === 5) {
+        hint = `🎵 Good ear! You heard the subdominant (perfect 4th) of ${correct}. ${guessed} and ${correct} share a harmonic relationship!`;
+        expression = 'lightbulb';
+    }
+    // Shared notes hint
+    else if (sharedNotes > 0) {
+        hint = `✨ You got ${sharedNotes} out of 3 notes correct! The chords share some notes but listen for the root note.`;
+        expression = 'lightbulb';
+    }
+    // Far off
+    else {
+        hint = `🤔 Not quite... The correct answer was ${correct}. Try listening for the root note (bass note) of the chord.`;
+        expression = 'thinking';
+    }
+    
+    return { hint, expression };
+}
 
     window.addEventListener('DOMContentLoaded', function() {
         
