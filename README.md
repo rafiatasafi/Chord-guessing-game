@@ -4,7 +4,7 @@ An interactive web-based ear training application that helps musicians practice 
 
 ## 🎵 Live Demo
 
-[Play the game here](https://github.com/rafiatasafi/Chord-guessing-game.git)
+[Play the game here](https://github.com/rafiatasafi/Chord-guessing-game)
 
 ## 📋 Features
 
