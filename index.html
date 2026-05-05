@@ -3,279 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Chord Guessing Game - Retro Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Righteous&display=swap" rel="stylesheet">
     <style>
-    /* Reset default browser styles */
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
     }
 
-    /* Body: Full screen gradient background, centered content */
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #75a17e 0%, #457c70 100%);
+        font-family: 'Fredoka', sans-serif;
+        background: linear-gradient(135deg, #f4e4d7 0%, #e8d5c4 100%);
         min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 20px;
+        position: relative;
+        overflow-x: hidden;
     }
 
-    /* Main game container: White box with shadow */
+    /* Floating music notes background */
+    body::before {
+        content: '♪ ♫ ♩ ♬';
+        position: absolute;
+        top: 10%;
+        left: 5%;
+        font-size: 3em;
+        color: rgba(209, 152, 169, 0.15);
+        animation: float 20s infinite;
+    }
+
+    body::after {
+        content: '♪ ♫ ♩ ♬';
+        position: absolute;
+        bottom: 10%;
+        right: 5%;
+        font-size: 3em;
+        color: rgba(176, 137, 198, 0.15);
+        animation: float 25s infinite reverse;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-30px) rotate(10deg); }
+    }
+
+    /* Container */
     .game-container {
-        background: white;
-        border-radius: 20px;
-        padding: 40px;
-        max-width: 700px;
+        background: #fff;
+        border-radius: 30px;
+        padding: 50px;
+        max-width: 800px;
         width: 100%;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        box-shadow: 
+            0 20px 60px rgba(176, 137, 198, 0.3),
+            0 0 0 10px rgba(255, 255, 255, 0.5),
+            0 0 0 20px rgba(176, 137, 198, 0.1);
+        position: relative;
     }
 
-    /* Title styling */
+    /* Retro corner decorations */
+    .game-container::before,
+    .game-container::after {
+        content: '';
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #d198a9 0%, #b089c6 100%);
+        border-radius: 50%;
+    }
+
+    .game-container::before {
+        top: -10px;
+        left: -10px;
+    }
+
+    .game-container::after {
+        bottom: -10px;
+        right: -10px;
+    }
+
+    /* Title */
     h1 {
+        font-family: 'Righteous', cursive;
         text-align: center;
-        color: #000000;
+        background: linear-gradient(135deg, #d198a9 0%, #b089c6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 10px;
-        font-size: 2.2em;
-    }
-    h2{
-        text-align: center;
-        color: #000000;
-        margin-bottom: 10px;
-        font-size: 2.2em;
+        font-size: 3em;
+        text-shadow: 2px 2px 4px rgba(176, 137, 198, 0.2);
     }
 
-
-    /* Score display */
-    .score {
+    h2 {
         text-align: center;
+        color: #8b7c9e;
+        margin-bottom: 20px;
         font-size: 1.3em;
-        color: #666;
-        margin-bottom: 10px;
-        font-weight: 500;
+        font-weight: 400;
     }
 
-    .score span {
-        color: #696969;
-        font-weight: bold;
-    }
-
-    /* Accuracy percentage */
-    .accuracy {
+    /* Start Screen */
+    .start-screen {
         text-align: center;
+        animation: fadeIn 0.5s;
+    }
+
+    .start-screen .character {
+        width: 200px;
+        height: 200px;
+        margin: 30px auto;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    .difficulty-title {
+        font-size: 1.8em;
+        color: #b089c6;
         margin-bottom: 30px;
-        color: #666;
-        font-size: 1em;
+        font-weight: 600;
     }
 
-    /* Play button section */
-    .play-section {
-        text-align: center;
-        margin-bottom: 40px;
+    .difficulty-buttons {
         display: flex;
-        gap: 15px;
+        gap: 30px;
         justify-content: center;
         flex-wrap: wrap;
     }
 
-    /* Play chord button */
-    .play-button {
-        background: linear-gradient(135deg, #29a867 0%, #6cc774 100%);
+    .difficulty-btn {
+        background: linear-gradient(135deg, #d198a9 0%, #b089c6 100%);
         color: white;
         border: none;
-        padding: 20px 50px;
-        font-size: 1.3em;
-        border-radius: 50px;
+        padding: 30px 50px;
+        font-size: 1.5em;
+        border-radius: 20px;
         cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        font-weight: bold;
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .play-button:hover:not(:disabled) {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
-    }
-
-    .play-button:active:not(:disabled) {
-        transform: translateY(-1px);
-    }
-
-    .play-button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    /* Reset button */
-    .reset-button {
-        background: #ef4444;
-        color: white;
-        border: none;
-        padding: 15px 30px;
-        font-size: 1.3em;
-        border-radius: 50px;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        font-weight: bold;
-        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
-    }
-
-    .reset-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.5);
-        background: #dc2626;
-    }
-
-    /* Guess section */
-    .guess-section {
-        margin-bottom: 30px;
-    }
-
-    .section-title {
-        font-size: 1.2em;
-        color: #333;
-        margin-bottom: 20px;
+        font-family: 'Fredoka', sans-serif;
         font-weight: 600;
-        text-align: center;
+        box-shadow: 
+            0 8px 0 #9077a8,
+            0 12px 20px rgba(176, 137, 198, 0.4);
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
     }
 
-    /* Grid for chord buttons: 4 columns */
-    .chord-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
+    .difficulty-btn::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s;
     }
 
-    /* Individual chord buttons */
-    .chord-btn {
-        padding: 18px;
-        border: 2px solid #ddd;
-        background: white;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: 1.1em;
-        font-weight: 600;
-        color: #333;
+    .difficulty-btn:hover::before {
+        opacity: 1;
     }
 
-    .chord-btn:hover:not(:disabled) {
-        border-color: #667eea;
-        background: #f0f4ff;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    .difficulty-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 
+            0 13px 0 #9077a8,
+            0 17px 25px rgba(176, 137, 198, 0.5);
     }
 
-    /* When correct answer */
-    .chord-btn.correct {
-        background: #10b981;
-        color: white;
-        border-color: #10b981;
-        animation: correctPulse 0.5s;
+    .difficulty-btn:active {
+        transform: translateY(5px);
+        box-shadow: 
+            0 3px 0 #9077a8,
+            0 7px 15px rgba(176, 137, 198, 0.3);
     }
 
-    /* When incorrect answer */
-    .chord-btn.incorrect {
-        background: #ef4444;
-        color: white;
-        border-color: #ef4444;
-        animation: shake 0.5s;
+    .difficulty-subtitle {
+        display: block;
+        font-size: 0.6em;
+        opacity: 0.9;
+        margin-top: 5px;
+        font-weight: 400;
     }
 
-    .chord-btn:disabled {
-        cursor: not-allowed;
-        opacity: 0.7;
-    }
-
-    /* Animation for correct answer */
-    @keyframes correctPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-
-    /* Animation for incorrect answer */
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-
-    /* Feedback message box */
-    .feedback {
-        margin-top: 25px;
-        padding: 20px;
-        border-radius: 12px;
-        text-align: center;
-        font-weight: bold;
-        font-size: 1.2em;
-        animation: fadeIn 0.3s;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .feedback.correct {
-        background: #d1fae5;
-        color: #065f46;
-        border: 2px solid #10b981;
-    }
-
-    .feedback.incorrect {
-        background: #fee2e2;
-        color: #991b1b;
-        border: 2px solid #ef4444;
-    }
-
-    /* Next button */
-    .next-btn {
-        background: #667eea;
-        color: white;
-        border: none;
-        padding: 15px 40px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 1.1em;
-        font-weight: bold;
-        width: 100%;
-        margin-top: 15px;
-        transition: all 0.3s;
-    }
-
-    .next-btn:hover {
-        background: #5568d3;
-        transform: translateY(-2px);
-    }
-
-    /* Game over container */
-    #gameOverContainer {
-        margin-top: 30px;
-        padding: 30px;
-        background: #f0f4ff;
-        border-radius: 15px;
-        text-align: center;
-    }
-
-    #gameOverContainer h2 {
-        color: #667eea;
-        margin-bottom: 15px;
-        font-size: 2em;
-    }
-
-    #gameOverContainer p {
-        font-size: 1.2em;
-        color: #333;
-        margin-bottom: 20px;
-    }
-
-    /* Hidden class */
-    .hidden {
-        display: none;
-    }
-    /* Character styling */
+    /* Character */
     .character-container {
         text-align: center;
         margin: 20px 0;
@@ -286,7 +205,7 @@
         height: 150px;
         object-fit: contain;
         transition: all 0.3s ease;
-        animation: fadeIn 0.5s;
+        filter: drop-shadow(0 5px 10px rgba(176, 137, 198, 0.3));
     }
 
     .character:hover {
@@ -296,359 +215,638 @@
     .character-message {
         margin-top: 10px;
         font-size: 1.1em;
-        color: #333;
+        color: #8b7c9e;
         font-weight: 600;
         min-height: 30px;
-        transition: all 0.3s ease;
+        background: linear-gradient(135deg, rgba(209, 152, 169, 0.1) 0%, rgba(176, 137, 198, 0.1) 100%);
+        padding: 15px;
+        border-radius: 15px;
+        border: 2px solid rgba(176, 137, 198, 0.2);
     }
 
-    /* Bounce animation for correct answer */
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-20px); }
-    }
-
-    .character.bounce {
+    .character.bounce-anim {
         animation: bounce 0.6s;
     }
 
-    /* Responsive design for mobile */
+    /* Back Button */
+    .back-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: linear-gradient(135deg, #8b7c9e 0%, #6d5f7a 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-family: 'Fredoka', sans-serif;
+        font-weight: 600;
+        font-size: 0.9em;
+        box-shadow: 
+            0 4px 0 #5a4d66,
+            0 7px 14px rgba(139, 124, 158, 0.4);
+        transition: all 0.2s;
+    }
+
+    .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 6px 0 #5a4d66,
+            0 9px 18px rgba(139, 124, 158, 0.5);
+    }
+
+    .back-button:active {
+        transform: translateY(2px);
+        box-shadow: 
+            0 2px 0 #5a4d66,
+            0 5px 10px rgba(139, 124, 158, 0.3);
+    }
+
+    /* Score */
+    .score-container {
+        background: linear-gradient(135deg, rgba(209, 152, 169, 0.15) 0%, rgba(176, 137, 198, 0.15) 100%);
+        padding: 20px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        border: 3px solid rgba(176, 137, 198, 0.3);
+    }
+
+    .score {
+        text-align: center;
+        font-size: 1.5em;
+        color: #8b7c9e;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .score span {
+        color: #d198a9;
+        font-weight: 700;
+        font-size: 1.2em;
+    }
+
+    .tries-left {
+        text-align: center;
+        font-size: 1.2em;
+        color: #d67a8a;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .accuracy {
+        text-align: center;
+        color: #b089c6;
+        font-size: 1.1em;
+        font-weight: 600;
+    }
+
+    .difficulty-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #d198a9 0%, #b089c6 100%);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        margin-top: 10px;
+        font-weight: 600;
+    }
+
+    /* Buttons */
+    .play-section {
+        text-align: center;
+        margin-bottom: 40px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .play-button {
+        background: linear-gradient(135deg, #91c9a8 0%, #6fb890 100%);
+        color: white;
+        border: none;
+        padding: 20px 50px;
+        font-size: 1.4em;
+        border-radius: 50px;
+        cursor: pointer;
+        font-family: 'Fredoka', sans-serif;
+        font-weight: 600;
+        box-shadow: 
+            0 6px 0 #5a9c78,
+            0 10px 20px rgba(111, 184, 144, 0.4);
+        transition: all 0.2s;
+    }
+
+    .play-button:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 
+            0 9px 0 #5a9c78,
+            0 13px 25px rgba(111, 184, 144, 0.5);
+    }
+
+    .play-button:active:not(:disabled) {
+        transform: translateY(3px);
+        box-shadow: 
+            0 3px 0 #5a9c78,
+            0 7px 15px rgba(111, 184, 144, 0.3);
+    }
+
+    .play-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .reset-button {
+        background: linear-gradient(135deg, #e89ba8 0%, #d67a8a 100%);
+        color: white;
+        border: none;
+        padding: 15px 35px;
+        font-size: 1.2em;
+        border-radius: 50px;
+        cursor: pointer;
+        font-family: 'Fredoka', sans-serif;
+        font-weight: 600;
+        box-shadow: 
+            0 5px 0 #b85f6f,
+            0 9px 18px rgba(214, 122, 138, 0.4);
+        transition: all 0.2s;
+    }
+
+    .reset-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 7px 0 #b85f6f,
+            0 11px 22px rgba(214, 122, 138, 0.5);
+    }
+
+    .reset-button:active {
+        transform: translateY(2px);
+        box-shadow: 
+            0 3px 0 #b85f6f,
+            0 7px 14px rgba(214, 122, 138, 0.3);
+    }
+
+    /* Chord Grid */
+    .guess-section {
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 1.3em;
+        color: #8b7c9e;
+        margin-bottom: 20px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .chord-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+
+    .chord-btn {
+        padding: 20px;
+        border: 3px solid #e8d5c4;
+        background: white;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #8b7c9e;
+        font-family: 'Fredoka', sans-serif;
+        box-shadow: 0 4px 0 #e8d5c4;
+        position: relative;
+    }
+
+    .chord-btn::before {
+        content: '♪';
+        position: absolute;
+        top: 5px;
+        right: 8px;
+        font-size: 0.8em;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .chord-btn:hover:not(:disabled) {
+        border-color: #d198a9;
+        background: linear-gradient(135deg, rgba(209, 152, 169, 0.1) 0%, rgba(176, 137, 198, 0.1) 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 7px 0 #e8d5c4;
+    }
+
+    .chord-btn:hover:not(:disabled)::before {
+        opacity: 1;
+    }
+
+    .chord-btn.correct {
+        background: linear-gradient(135deg, #91c9a8 0%, #6fb890 100%);
+        color: white;
+        border-color: #6fb890;
+        animation: correctPulse 0.5s;
+    }
+
+    .chord-btn.incorrect {
+        background: linear-gradient(135deg, #e89ba8 0%, #d67a8a 100%);
+        color: white;
+        border-color: #d67a8a;
+        animation: shake 0.5s;
+    }
+
+    .chord-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    @keyframes correctPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-8px); }
+        75% { transform: translateX(8px); }
+    }
+
+    /* Feedback */
+    .feedback {
+        margin-top: 25px;
+        padding: 25px;
+        border-radius: 20px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.1em;
+        animation: fadeIn 0.3s;
+        border: 3px solid;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback.correct {
+        background: linear-gradient(135deg, rgba(145, 201, 168, 0.2) 0%, rgba(111, 184, 144, 0.2) 100%);
+        color: #5a9c78;
+        border-color: #91c9a8;
+    }
+
+    .feedback.incorrect {
+        background: linear-gradient(135deg, rgba(232, 155, 168, 0.2) 0%, rgba(214, 122, 138, 0.2) 100%);
+        color: #b85f6f;
+        border-color: #e89ba8;
+    }
+
+    .next-btn {
+        background: linear-gradient(135deg, #d198a9 0%, #b089c6 100%);
+        color: white;
+        border: none;
+        padding: 18px 40px;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 1.2em;
+        font-weight: 600;
+        font-family: 'Fredoka', sans-serif;
+        width: 100%;
+        margin-top: 15px;
+        box-shadow: 
+            0 5px 0 #9077a8,
+            0 9px 18px rgba(176, 137, 198, 0.4);
+        transition: all 0.2s;
+    }
+
+    .next-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 7px 0 #9077a8,
+            0 11px 22px rgba(176, 137, 198, 0.5);
+    }
+
+    .next-btn:active {
+        transform: translateY(2px);
+        box-shadow: 
+            0 3px 0 #9077a8,
+            0 7px 14px rgba(176, 137, 198, 0.3);
+    }
+
+    /* Game Over */
+    #gameOverContainer {
+        margin-top: 30px;
+        padding: 40px;
+        background: linear-gradient(135deg, rgba(209, 152, 169, 0.15) 0%, rgba(176, 137, 198, 0.15) 100%);
+        border-radius: 25px;
+        text-align: center;
+        border: 3px solid rgba(176, 137, 198, 0.3);
+    }
+
+    #gameOverContainer h2 {
+        color: #d198a9;
+        margin-bottom: 20px;
+        font-size: 2.5em;
+        font-family: 'Righteous', cursive;
+    }
+
+    #gameOverContainer p {
+        font-size: 1.3em;
+        color: #8b7c9e;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    /* Responsive */
     @media (max-width: 600px) {
         .chord-grid {
             grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
         }
         
         h1 {
-            font-size: 1.8em;
+            font-size: 2em;
         }
         
-        .play-button {
-            padding: 15px 30px;
-            font-size: 1.1em;
+        .game-container {
+            padding: 30px;
+        }
+        
+        .difficulty-buttons {
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .difficulty-btn {
+            width: 100%;
         }
     }
-</style>
+    </style>
 </head>
 <body>
-    <!--coding the game-->
-    <div class = "game-container">
-        <!--Header Title-->
-        <h1>🎸Chord Guessing Game </h1>
-        <h2> Test your ear's power! </h2>
-        <!-- Character SECTION -->
+    <!-- Start Screen -->
+    <div class="game-container" id="startScreen">
+        <h1>🎸 Chord Quest</h1>
+        <h2>Retro Ear Training Adventure</h2>
+        
+        <div class="start-screen">
+            <img src="images/happy.png" alt="Character" class="character">
+            <div class="difficulty-title">Choose Your Challenge!</div>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn" onclick="startGame('easy')">
+                    🎵 Easy Mode
+                    <span class="difficulty-subtitle">Major Chords Only</span>
+                </button>
+                <button class="difficulty-btn" onclick="startGame('hard')">
+                    🎸 Hard Mode
+                    <span class="difficulty-subtitle">Major + Minor Chords</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div class="game-container hidden" id="gameScreen">
+        <h1>🎸 Chord Quest</h1>
+        <h2>Test your ear's power!</h2>
+        
         <div class="character-container">
             <img id="characterImg" src="images/happy.png" alt="Character" class="character">
             <div id="characterMessage" class="character-message">Ready to play!</div>
         </div>
 
+        <!-- Back Button -->
+        <button class="back-button" id="backBtn">← Back to Menu</button>
 
-
-        <!--score display-->
-        <div class="score">
-            Score : <span id="correct">0</span> / <span id = "total">20</span> 
+        <div class="score-container">
+            <div class="score">
+                Score: <span id="correct">0</span> / <span id="total">20</span>
+            </div>
+            <div class="tries-left" id="triesLeft">Tries Left: 20</div>
+            <div class="accuracy" id="accuracy"></div>
+            <div class="difficulty-badge" id="difficultyBadge">Easy Mode</div>
         </div>
-        <!--accuracy percentage-->
-        <div class="accuracy" id ="accuracy"></div>
-        <!--play button-->
+
         <div class="play-section">
-            <button class ="play-button" id="playBtn">🎵Play Chord</button>
+            <button class="play-button" id="playBtn">🎵 Play Chord</button>
             <button class="reset-button" id="resetBtn">🔄 Reset Score</button>
         </div>
-        <!-- Chord selection section -->
+
         <div class="guess-section">
             <div class="section-title">Select the chord you hear:</div>
-            <div class="chord-grid" id="chordGrid">
-                <!-- Chord buttons will be generated by JavaScript -->
-            </div>
-            
+            <div class="chord-grid" id="chordGrid"></div>
         </div>
 
-        <!-- Feedback section (populated by JavaScript) -->
         <div id="feedbackContainer"></div>
-        <!-- Game over section (hidden initially, shown when 20 tries reached) -->
-        <div id="gameOverContainer" class="hidden">
-            <!-- Will be populated by JavaScript when game ends -->
-        </div>
-
+        <div id="gameOverContainer" class="hidden"></div>
     </div>
+
     <script>
-    // PART 1: DEFINING OUR CHORD DATA
-    // ================================
-  
-    
-    const CHORDS = {
-        'C': { root: 130.81, notes: [130.81, 164.81, 196.00] },
-        'C#': { root: 138.59, notes: [138.59, 174.61, 207.65] },
-        'D': { root: 146.83, notes: [146.83, 185.00, 220.00] },
-        'Eb': { root: 155.56, notes: [155.56, 196.00, 233.08] },
-        'E': { root: 164.81, notes: [164.81, 207.65, 246.94] },
-        'F': { root: 174.61, notes: [174.61, 220.00, 261.63] },
-        'F#': { root: 185.00, notes: [185.00, 233.08, 277.18] },
-        'G': { root: 196.00, notes: [196.00, 246.94, 293.66] },
-        'Ab': { root: 207.65, notes: [207.65, 261.63, 311.13] },
-        'A': { root: 220.00, notes: [220.00, 277.18, 329.63] },
-        'Bb': { root: 233.08, notes: [233.08, 293.66, 349.23] },
-        'B': { root: 246.94, notes: [246.94, 311.13, 369.99] }
+    // CHORD DATA
+    const MAJOR_CHORDS = {
+        'C': { root: 130.81, notes: [130.81, 164.81, 196.00], type: 'major' },
+        'C#': { root: 138.59, notes: [138.59, 174.61, 207.65], type: 'major' },
+        'D': { root: 146.83, notes: [146.83, 185.00, 220.00], type: 'major' },
+        'Eb': { root: 155.56, notes: [155.56, 196.00, 233.08], type: 'major' },
+        'E': { root: 164.81, notes: [164.81, 207.65, 246.94], type: 'major' },
+        'F': { root: 174.61, notes: [174.61, 220.00, 261.63], type: 'major' },
+        'F#': { root: 185.00, notes: [185.00, 233.08, 277.18], type: 'major' },
+        'G': { root: 196.00, notes: [196.00, 246.94, 293.66], type: 'major' },
+        'Ab': { root: 207.65, notes: [207.65, 261.63, 311.13], type: 'major' },
+        'A': { root: 220.00, notes: [220.00, 277.18, 329.63], type: 'major' },
+        'Bb': { root: 233.08, notes: [233.08, 293.66, 349.23], type: 'major' },
+        'B': { root: 246.94, notes: [246.94, 311.13, 369.99], type: 'major' }
     };
-    
-    
-    
-    let currentChord = null;        
-                                     
-    
-    let correctCount = 0;            
-    
-    let attemptCount = 0;            
-    
-    const MAX_ATTEMPTS = 20;         
-    
-    let hasGuessed = false;          // Did the player guess this round?
-                                     
-    
-    let audioContext = null;         
-    
-    
-  
-    
+
+    const MINOR_CHORDS = {
+        'Cm': { root: 130.81, notes: [130.81, 155.56, 196.00], type: 'minor' },
+        'C#m': { root: 138.59, notes: [138.59, 164.81, 207.65], type: 'minor' },
+        'Dm': { root: 146.83, notes: [146.83, 174.61, 220.00], type: 'minor' },
+        'Ebm': { root: 155.56, notes: [155.56, 185.00, 233.08], type: 'minor' },
+        'Em': { root: 164.81, notes: [164.81, 196.00, 246.94], type: 'minor' },
+        'Fm': { root: 174.61, notes: [174.61, 207.65, 261.63], type: 'minor' },
+        'F#m': { root: 185.00, notes: [185.00, 220.00, 277.18], type: 'minor' },
+        'Gm': { root: 196.00, notes: [196.00, 233.08, 293.66], type: 'minor' },
+        'Abm': { root: 207.65, notes: [207.65, 246.94, 311.13], type: 'minor' },
+        'Am': { root: 220.00, notes: [220.00, 261.63, 329.63], type: 'minor' },
+        'Bbm': { root: 233.08, notes: [233.08, 277.18, 349.23], type: 'minor' },
+        'Bm': { root: 246.94, notes: [246.94, 293.66, 369.99], type: 'minor' }
+    };
+
+    let CHORDS = {};
+    let currentDifficulty = 'easy';
+    let currentChord = null;
+    let correctCount = 0;
+    let attemptCount = 0;
+    const MAX_ATTEMPTS = 20;
+    let hasGuessed = false;
+    let audioContext = null;
+
+    // START GAME
+    function startGame(difficulty) {
+        currentDifficulty = difficulty;
+        
+        // Reset everything when starting
+        correctCount = 0;
+        attemptCount = 0;
+        hasGuessed = false;
+        currentChord = null;
+        
+        if (difficulty === 'easy') {
+            CHORDS = { ...MAJOR_CHORDS };
+            document.getElementById('difficultyBadge').textContent = '🎵 Easy Mode';
+        } else {
+            CHORDS = { ...MAJOR_CHORDS, ...MINOR_CHORDS };
+            document.getElementById('difficultyBadge').textContent = '🎸 Hard Mode';
+        }
+        
+        document.getElementById('startScreen').classList.add('hidden');
+        document.getElementById('gameScreen').classList.remove('hidden');
+        
+        // Reset character to happy and default message
+        updateCharacter('happy', 'Ready to play!');
+        
+        // Reset UI
+        document.getElementById('feedbackContainer').innerHTML = '';
+        document.getElementById('gameOverContainer').classList.add('hidden');
+        
+        createChordButtons();
+        updateScore();
+        nextRound();
+    }
+
+    // CREATE BUTTONS
     function createChordButtons() {
-       
         const grid = document.getElementById('chordGrid');
-        
-        
         grid.innerHTML = '';
         
-       
         Object.keys(CHORDS).forEach(function(chordName) {
-            // This code runs 12 times, once for each chord
-            
-            // Create a new button element
             const button = document.createElement('button');
-            
-            // Add the CSS class to style it
             button.className = 'chord-btn';
-            
-            // Set the text inside the button
-            button.textContent = chordName;  // 'C', 'C#', etc.
-            
-            // Add a click event - what happens when clicked?
+            button.textContent = chordName;
             button.onclick = function() {
                 handleGuess(chordName, button);
             };
-            
-            // Add this button to the grid
             grid.appendChild(button);
         });
     }
-     
-    
-    
+
+    // HANDLE GUESS
     function handleGuess(guessedChord, button) {
-        // guessedChord = which chord they clicked (e.g., 'C', 'D#')
-        // button = the actual button element they clicked
+        if (hasGuessed || !currentChord) return;
         
-        // Step 1: Check if they already guessed or if there's no chord playing
-        if (hasGuessed || !currentChord) {
-            return;  // Exit the function early - do nothing
-        }
-        
-        // Step 2: Mark that they've guessed (prevent multiple clicks)
         hasGuessed = true;
-        
-        // Step 3: Increase the attempt counter
         attemptCount++;
         
-        // Step 4: Disable all buttons (can't click anymore this round)
         const allButtons = document.querySelectorAll('.chord-btn');
-        allButtons.forEach(function(btn) {
-            btn.disabled = true;
-        });
+        allButtons.forEach(btn => btn.disabled = true);
         
-       // Step 5: Check if the guess is correct
-const isCorrect = (guessedChord === currentChord);
-
-if (isCorrect) {
-    correctCount++;
-    button.classList.add('correct');
-    updateCharacter('happy', '🎉 Amazing! You got it right!');
-    showFeedback(true, '🎉 Correct! It was ' + currentChord + ' major');
-} else {
-    // If wrong, show which was correct
-    button.classList.add('incorrect');
-    
-    // Find and highlight the correct button in green
-    allButtons.forEach(function(btn) {
-        if (btn.textContent === currentChord) {
-            btn.classList.add('correct');
+        const isCorrect = (guessedChord === currentChord);
+        
+        if (isCorrect) {
+            correctCount++;
+            button.classList.add('correct');
+            updateCharacter('happy', '🎉 Amazing! You got it right!');
+            showFeedback(true, `🎉 Correct! It was ${currentChord}`);
+        } else {
+            button.classList.add('incorrect');
+            allButtons.forEach(function(btn) {
+                if (btn.textContent === currentChord) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            const hintData = generateHint(guessedChord, currentChord);
+            updateCharacter(hintData.expression, hintData.hint);
+            showFeedback(false, '❌ ' + hintData.hint);
         }
-    });
-    
-    // Generate intelligent hint based on music theory
-    const hintData = generateHint(guessedChord, currentChord);
-    
-    // Update character with appropriate expression
-    updateCharacter(hintData.expression, hintData.hint);
-    
-    // Show feedback with the hint
-    showFeedback(false, '❌ Incorrect. ' + hintData.hint);
-}
         
-        // Step 7: Update the score display
         updateScore();
         
-        // Step 8: Check if game is over (20 attempts reached)
         if (attemptCount >= MAX_ATTEMPTS) {
             showGameOver();
         }
     }
-    createChordButtons(); // Call the function to create buttons when page loads
-    
-    
-    // PART 5: SHOWING FEEDBACK
-    // =========================
-    
+
+    // FEEDBACK
     function showFeedback(isCorrect, message) {
-        // isCorrect = true or false (boolean)
-        // message = the text to display
-        
-        // Step 1: Get the feedback container
         const container = document.getElementById('feedbackContainer');
-        
-        // Step 2: Create the HTML for feedback message and next button
-        // We use template literals (backticks `) to easily mix HTML and variables
         container.innerHTML = `
             <div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">
                 ${message}
             </div>
             <button class="next-btn" onclick="nextRound()">Next Chord →</button>
         `;
-        
-        
     }
-    
-   
-    // PART 6: UPDATE SCORE DISPLAY
-    // =============================
-    
+
+    // UPDATE SCORE
     function updateScore() {
-        // Step 1: Update the correct count display
         document.getElementById('correct').textContent = correctCount;
-        
-        // Step 2: Update the total attempts display
-        // We show attemptCount out of MAX_ATTEMPTS (20)
         document.getElementById('total').textContent = MAX_ATTEMPTS;
         
-        // Step 3: Calculate and show accuracy percentage
+        // Update tries left
+        const triesLeft = MAX_ATTEMPTS - attemptCount;
+        document.getElementById('triesLeft').textContent = 'Tries Left: ' + triesLeft;
+        
         if (attemptCount > 0) {
-            // Calculate percentage: (correct / total) * 100
             const accuracy = Math.round((correctCount / attemptCount) * 100);
-            
-            // Display it
             document.getElementById('accuracy').textContent = 'Accuracy: ' + accuracy + '%';
+        } else {
+            document.getElementById('accuracy').textContent = '';
         }
     }
-    
-    
-    
-    // PART 7: SELECT RANDOM CHORD
-    // ============================
-    
+
+    // RANDOM CHORD
     function selectRandomChord() {
-        // Step 1: Get all chord names as an array
         const chordNames = Object.keys(CHORDS);
-        // Result: ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
-        
-        // Step 2: Generate a random number between 0 and 11
-        // Math.random() gives a decimal between 0 and 0.999...
-        // Multiply by 12 gives: 0 to 11.999...
-        // Math.floor() rounds DOWN to integer: 0, 1, 2, ... 11
         const randomIndex = Math.floor(Math.random() * chordNames.length);
-        
-        // Step 3: Return the chord name at that random position
         return chordNames[randomIndex];
     }
-    
-    
-    
-   
-    // PART 8: INITIALIZE AUDIO CONTEXT
-    // =================================
-    
+
+    // AUDIO
     function initAudio() {
-        // Audio context is like a "sound studio" in the browser
-        // We only create it once (when user first interacts)
-        
         if (!audioContext) {
-            // Create the audio context
-            // Different browsers use different names, so we check both
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
-        
         return audioContext;
     }
-    
-    
-    // PART 8B: PLAY CHORD FUNCTION
-    // =============================
-    
+
     function playChord(chordName) {
-        // Get the audio context (our sound studio)
         const ctx = initAudio();
-        
-        // Get the chord data (frequencies of notes)
         const chord = CHORDS[chordName];
-        
-        // Get current time in the audio timeline
         const now = ctx.currentTime;
-        
-        // How long should the chord play? 2 seconds
         const duration = 2.0;
         
-        // Loop through each note in the chord (usually 3 notes)
-        chord.notes.forEach(function(frequency, index) {
-            // For each note, we create sound generators
-            
-            // Step 1: Create an oscillator (sound wave generator)
+        chord.notes.forEach(function(frequency) {
             const oscillator = ctx.createOscillator();
-            
-            // Step 2: Create a gain node (volume controller)
             const gainNode = ctx.createGain();
             
-            // Step 3: Set oscillator type to 'sawtooth' for guitar-like sound
-            // Types: 'sine' (pure tone), 'square' (harsh), 'sawtooth' (guitar-like), 'triangle' (mellow)
             oscillator.type = 'sawtooth';
-            
-            // Step 4: Set the frequency (pitch) of this note
             oscillator.frequency.setValueAtTime(frequency, now);
             
-            // Step 5: ADSR Envelope - makes it sound more realistic
-            // A = Attack (how fast sound starts)
-            // D = Decay (how fast it drops from peak)
-            // S = Sustain (steady level while held)
-            // R = Release (how fast it fades out)
+            const attack = 0.01;
+            const decay = 0.1;
+            const sustain = 0.7;
+            const release = 0.3;
             
-            const attack = 0.01;    // 10 milliseconds to reach peak
-            const decay = 0.1;      // 100 milliseconds to drop to sustain
-            const sustain = 0.7;    // Sustain at 70% of peak volume
-            const release = 0.3;    // 300 milliseconds to fade out
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.15, now + attack);
+            gainNode.gain.linearRampToValueAtTime(sustain * 0.15, now + attack + decay);
+            gainNode.gain.setValueAtTime(sustain * 0.15, now + duration - release);
+            gainNode.gain.linearRampToValueAtTime(0, now + duration);
             
-            // Apply the envelope to volume
-            gainNode.gain.setValueAtTime(0, now);  // Start at 0 volume
-            gainNode.gain.linearRampToValueAtTime(0.15, now + attack);  // Attack to peak
-            gainNode.gain.linearRampToValueAtTime(sustain * 0.15, now + attack + decay);  // Decay
-            gainNode.gain.setValueAtTime(sustain * 0.15, now + duration - release);  // Sustain
-            gainNode.gain.linearRampToValueAtTime(0, now + duration);  // Release to 0
-            
-            // Step 6: Connect the audio nodes (like plugging cables)
-            // oscillator → gainNode → speakers
             oscillator.connect(gainNode);
-            gainNode.connect(ctx.destination);  // destination = speakers
+            gainNode.connect(ctx.destination);
             
-            // Step 7: Start and stop the sound
-            oscillator.start(now);           // Start playing NOW
-            oscillator.stop(now + duration); // Stop after 2 seconds
+            oscillator.start(now);
+            oscillator.stop(now + duration);
         });
     }
-    // PART 10: NEXT ROUND FUNCTION
+
+    // NEXT ROUND
     function nextRound() {
         currentChord = selectRandomChord();
         hasGuessed = false;
@@ -662,177 +860,165 @@ if (isCorrect) {
         
         document.getElementById('playBtn').disabled = false;
     }
-    
-    // PART 11: RESET GAME FUNCTION
+
+    // RESET CURRENT DIFFICULTY
     function resetGame() {
+        // Only reset score and attempts, keep same difficulty
         correctCount = 0;
         attemptCount = 0;
-        updateScore();
+        hasGuessed = false;
+        currentChord = null;
+        
+        // Reset character to happy and default message
+        updateCharacter('happy', 'Ready to play again!');
+        
+        // Reset UI
+        document.getElementById('feedbackContainer').innerHTML = '';
         document.getElementById('gameOverContainer').classList.add('hidden');
+        
+        // Update display
+        updateScore();
+        
+        // Reset all buttons
+        const allButtons = document.querySelectorAll('.chord-btn');
+        allButtons.forEach(function(btn) {
+            btn.disabled = false;
+            btn.classList.remove('correct', 'incorrect');
+        });
+        
+        document.getElementById('playBtn').disabled = false;
+        
+        // Start new round
         nextRound();
     }
     
-    // PART 12: GAME OVER FUNCTION
+    // BACK TO MAIN MENU
+    function backToMenu() {
+        // Hide game screen, show start screen
+        document.getElementById('gameScreen').classList.add('hidden');
+        document.getElementById('startScreen').classList.remove('hidden');
+        
+        // Reset all game state
+        correctCount = 0;
+        attemptCount = 0;
+        hasGuessed = false;
+        currentChord = null;
+        
+        // Clear any feedback
+        document.getElementById('feedbackContainer').innerHTML = '';
+        document.getElementById('gameOverContainer').classList.add('hidden');
+    }
+
+    // GAME OVER
     function showGameOver() {
         const finalAccuracy = Math.round((correctCount / MAX_ATTEMPTS) * 100);
         const container = document.getElementById('gameOverContainer');
         
+        let message = '';
+        if (finalAccuracy >= 90) message = '🌟 Outstanding!';
+        else if (finalAccuracy >= 70) message = '🎵 Great job!';
+        else if (finalAccuracy >= 50) message = '👍 Good effort!';
+        else message = '🎸 Keep practicing!';
+        
         container.innerHTML = `
-            <h2>🎉 Game Over!</h2>
+            <h2>${message}</h2>
             <p>Final Score: ${correctCount} / ${MAX_ATTEMPTS}</p>
             <p>Accuracy: ${finalAccuracy}%</p>
-            <button class="next-btn" onclick="resetGame()">Play Again</button>
+            <button class="next-btn" onclick="resetGame()">Play Again (Same Difficulty)</button>
+            <button class="next-btn" onclick="backToMenu()" style="background: linear-gradient(135deg, #8b7c9e 0%, #6d5f7a 100%); box-shadow: 0 5px 0 #5a4d66, 0 9px 18px rgba(139, 124, 158, 0.4); margin-top: 10px;">Back to Menu</button>
         `;
         
         container.classList.remove('hidden');
         document.getElementById('playBtn').disabled = true;
-        
-        document.querySelectorAll('.chord-btn').forEach(function(btn) {
-            btn.disabled = true;
-        });
+        document.querySelectorAll('.chord-btn').forEach(btn => btn.disabled = true);
     }
-    // PART 14: CHARACTER EXPRESSION FUNCTIONS
-    // ========================================
 
+    // CHARACTER
     function updateCharacter(expression, message) {
         const characterImg = document.getElementById('characterImg');
         const characterMessage = document.getElementById('characterMessage');
         
-        // Change the image
         characterImg.src = `images/${expression}.png`;
-        
-        // Update message
         characterMessage.textContent = message;
         
-        // Add bounce animation for happy
         if (expression === 'happy') {
-            characterImg.classList.add('bounce');
-            setTimeout(() => characterImg.classList.remove('bounce'), 600);
+            characterImg.classList.add('bounce-anim');
+            setTimeout(() => characterImg.classList.remove('bounce-anim'), 600);
         }
     }
-    // PART 15: MUSIC THEORY HINT SYSTEM
-// ==================================
 
-function getSemitoneDistance(chord1, chord2) {
-    // Map each chord to its semitone position (C = 0)
-    const semitoneMap = {
-        'C': 0, 'C#': 1, 'D': 2, 'Eb': 3, 'E': 4, 'F': 5,
-        'F#': 6, 'G': 7, 'Ab': 8, 'A': 9, 'Bb': 10, 'B': 11
-    };
-    
-    const pos1 = semitoneMap[chord1];
-    const pos2 = semitoneMap[chord2];
-    
-    // Calculate shortest distance (accounting for circular nature)
-    const distance = Math.abs(pos1 - pos2);
-    return Math.min(distance, 12 - distance);
-}
+    // HINTS
+    function getSemitoneDistance(chord1, chord2) {
+        const getRoot = (name) => {
+            const rootName = name.replace('m', '');
+            const map = {
+                'C': 0, 'C#': 1, 'D': 2, 'Eb': 3, 'E': 4, 'F': 5,
+                'F#': 6, 'G': 7, 'Ab': 8, 'A': 9, 'Bb': 10, 'B': 11
+            };
+            return map[rootName];
+        };
+        
+        const pos1 = getRoot(chord1);
+        const pos2 = getRoot(chord2);
+        const distance = Math.abs(pos1 - pos2);
+        return Math.min(distance, 12 - distance);
+    }
 
-function getIntervalName(semitones) {
-    const intervals = {
-        0: 'unison',
-        1: 'minor 2nd',
-        2: 'major 2nd',
-        3: 'minor 3rd',
-        4: 'major 3rd',
-        5: 'perfect 4th',
-        6: 'tritone',
-        7: 'perfect 5th',
-        8: 'minor 6th',
-        9: 'major 6th',
-        10: 'minor 7th',
-        11: 'major 7th'
-    };
-    return intervals[semitones] || 'unknown';
-}
+    function generateHint(guessed, correct) {
+        const distance = getSemitoneDistance(guessed, correct);
+        const guessedType = guessed.includes('m') ? 'minor' : 'major';
+        const correctType = correct.includes('m') ? 'minor' : 'major';
+        
+        let hint = '';
+        let expression = 'thinking';
+        
+        // Same root, different quality
+        if (guessed.replace('m', '') === correct.replace('m', '')) {
+            hint = `💡 Same root note, but you guessed ${guessedType} instead of ${correctType}! Listen for the mood.`;
+            expression = 'lightbulb';
+        }
+        // Very close
+        else if (distance === 1) {
+            hint = `💡 So close! Only one half-step away from ${correct}!`;
+            expression = 'lightbulb';
+        }
+        // Close
+        else if (distance === 2) {
+            hint = `💡 You're close! Just 2 semitones from ${correct}.`;
+            expression = 'lightbulb';
+        }
+        // Perfect 5th
+        else if (distance === 7) {
+            hint = `🎵 You heard the dominant (5th) relationship! ${guessed} and ${correct} are related.`;
+            expression = 'lightbulb';
+        }
+        // Perfect 4th
+        else if (distance === 5) {
+            hint = `🎵 You heard the subdominant (4th) relationship!`;
+            expression = 'lightbulb';
+        }
+        // Far off
+        else {
+            hint = `🤔 The answer was ${correct}. Listen for the root note and the mood (major/minor).`;
+            expression = 'thinking';
+        }
+        
+        return { hint, expression };
+    }
 
-function countSharedNotes(chord1, chord2) {
-    const notes1 = CHORDS[chord1].notes;
-    const notes2 = CHORDS[chord2].notes;
-    
-    let sharedCount = 0;
-    
-    // Check each note in chord1 against chord2
-    notes1.forEach(freq1 => {
-        notes2.forEach(freq2 => {
-            // Notes are the same if within 1 Hz (accounting for floating point)
-            if (Math.abs(freq1 - freq2) < 1) {
-                sharedCount++;
-            }
-        });
-    });
-    
-    return sharedCount;
-}
-
-function generateHint(guessed, correct) {
-    const distance = getSemitoneDistance(guessed, correct);
-    const sharedNotes = countSharedNotes(guessed, correct);
-    const interval = getIntervalName(distance);
-    
-    let hint = '';
-    let expression = 'thinking';
-    
-    // VERY CLOSE - 1 semitone away
-    if (distance === 1) {
-        hint = `💡 So close! You were only one half-step away! ${guessed} is just 1 semitone from ${correct}.`;
-        expression = 'lightbulb';
-    }
-    // Close - 2 semitones
-    else if (distance === 2) {
-        hint = `💡 You're close! You were 2 semitones (a whole step) away from ${correct}.`;
-        expression = 'lightbulb';
-    }
-    // Perfect 5th relationship (dominant)
-    else if (distance === 7) {
-        hint = `🎵 Interesting! You heard the dominant (perfect 5th) of ${correct}. ${guessed} and ${correct} are closely related!`;
-        expression = 'lightbulb';
-    }
-    // Perfect 4th relationship (subdominant)
-    else if (distance === 5) {
-        hint = `🎵 Good ear! You heard the subdominant (perfect 4th) of ${correct}. ${guessed} and ${correct} share a harmonic relationship!`;
-        expression = 'lightbulb';
-    }
-    // Shared notes hint
-    else if (sharedNotes > 0) {
-        hint = `✨ You got ${sharedNotes} out of 3 notes correct! The chords share some notes but listen for the root note.`;
-        expression = 'lightbulb';
-    }
-    // Far off
-    else {
-        hint = `🤔 Not quite... The correct answer was ${correct}. Try listening for the root note (bass note) of the chord.`;
-        expression = 'thinking';
-    }
-    
-    return { hint, expression };
-}
-
+    // INIT
     window.addEventListener('DOMContentLoaded', function() {
-        
-        // Now all HTML elements exist, safe to access them!
-        
-        // PART 9: PLAY CHORD BUTTON EVENT
         const playButton = document.getElementById('playBtn');
         playButton.addEventListener('click', function() {
-            if (currentChord) {
-                playChord(currentChord);
-            }
+            if (currentChord) playChord(currentChord);
         });
         
-        // PART 11: RESET BUTTON EVENT
         const resetButton = document.getElementById('resetBtn');
-        resetButton.addEventListener('click', function() {
-            resetGame();
-        });
+        resetButton.addEventListener('click', resetGame);
         
-        // PART 13: INITIALIZE THE GAME
-        createChordButtons();
-        nextRound();
-        
-    }); // Close DOMContentLoaded
-
-</script>
-
+        const backButton = document.getElementById('backBtn');
+        backButton.addEventListener('click', backToMenu);
+    });
+    </script>
 </body>
 </html>
-    
