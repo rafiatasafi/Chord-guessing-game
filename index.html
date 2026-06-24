@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chord Quest - Retro Ear Training Game</title>
+    <title>Chord Guessing Game - Retro Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Righteous&display=swap" rel="stylesheet">
     <style>
     * {
@@ -24,6 +24,7 @@
         overflow-x: hidden;
     }
 
+    /* Floating music notes background */
     body::before {
         content: '♪ ♫ ♩ ♬';
         position: absolute;
@@ -49,6 +50,7 @@
         50% { transform: translateY(-30px) rotate(10deg); }
     }
 
+    /* Container */
     .game-container {
         background: #fff;
         border-radius: 30px;
@@ -62,6 +64,7 @@
         position: relative;
     }
 
+    /* Retro corner decorations */
     .game-container::before,
     .game-container::after {
         content: '';
@@ -82,6 +85,7 @@
         right: -10px;
     }
 
+    /* Title */
     h1 {
         font-family: 'Righteous', cursive;
         text-align: center;
@@ -102,6 +106,7 @@
         font-weight: 400;
     }
 
+    /* Start Screen */
     .start-screen {
         text-align: center;
         animation: fadeIn 0.5s;
@@ -151,6 +156,22 @@
         overflow: hidden;
     }
 
+    .difficulty-btn::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .difficulty-btn:hover::before {
+        opacity: 1;
+    }
+
     .difficulty-btn:hover {
         transform: translateY(-5px);
         box-shadow: 
@@ -173,32 +194,7 @@
         font-weight: 400;
     }
 
-    .back-button {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        background: linear-gradient(135deg, #8b7c9e 0%, #6d5f7a 100%);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 20px;
-        cursor: pointer;
-        font-family: 'Fredoka', sans-serif;
-        font-weight: 600;
-        font-size: 0.9em;
-        box-shadow: 
-            0 4px 0 #5a4d66,
-            0 7px 14px rgba(139, 124, 158, 0.4);
-        transition: all 0.2s;
-    }
-
-    .back-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 
-            0 6px 0 #5a4d66,
-            0 9px 18px rgba(139, 124, 158, 0.5);
-    }
-
+    /* Character */
     .character-container {
         text-align: center;
         margin: 20px 0;
@@ -232,6 +228,41 @@
         animation: bounce 0.6s;
     }
 
+    /* Back Button */
+    .back-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: linear-gradient(135deg, #8b7c9e 0%, #6d5f7a 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-family: 'Fredoka', sans-serif;
+        font-weight: 600;
+        font-size: 0.9em;
+        box-shadow: 
+            0 4px 0 #5a4d66,
+            0 7px 14px rgba(139, 124, 158, 0.4);
+        transition: all 0.2s;
+    }
+
+    .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 6px 0 #5a4d66,
+            0 9px 18px rgba(139, 124, 158, 0.5);
+    }
+
+    .back-button:active {
+        transform: translateY(2px);
+        box-shadow: 
+            0 2px 0 #5a4d66,
+            0 5px 10px rgba(139, 124, 158, 0.3);
+    }
+
+    /* Score */
     .score-container {
         background: linear-gradient(135deg, rgba(209, 152, 169, 0.15) 0%, rgba(176, 137, 198, 0.15) 100%);
         padding: 20px;
@@ -280,6 +311,7 @@
         font-weight: 600;
     }
 
+    /* Buttons */
     .play-section {
         text-align: center;
         margin-bottom: 40px;
@@ -347,6 +379,14 @@
             0 11px 22px rgba(214, 122, 138, 0.5);
     }
 
+    .reset-button:active {
+        transform: translateY(2px);
+        box-shadow: 
+            0 3px 0 #b85f6f,
+            0 7px 14px rgba(214, 122, 138, 0.3);
+    }
+
+    /* Chord Grid */
     .guess-section {
         margin-bottom: 30px;
     }
@@ -380,11 +420,25 @@
         position: relative;
     }
 
+    .chord-btn::before {
+        content: '♪';
+        position: absolute;
+        top: 5px;
+        right: 8px;
+        font-size: 0.8em;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
     .chord-btn:hover:not(:disabled) {
         border-color: #d198a9;
         background: linear-gradient(135deg, rgba(209, 152, 169, 0.1) 0%, rgba(176, 137, 198, 0.1) 100%);
         transform: translateY(-3px);
         box-shadow: 0 7px 0 #e8d5c4;
+    }
+
+    .chord-btn:hover:not(:disabled)::before {
+        opacity: 1;
     }
 
     .chord-btn.correct {
@@ -417,6 +471,7 @@
         75% { transform: translateX(8px); }
     }
 
+    /* Feedback */
     .feedback {
         margin-top: 25px;
         padding: 25px;
@@ -470,6 +525,14 @@
             0 11px 22px rgba(176, 137, 198, 0.5);
     }
 
+    .next-btn:active {
+        transform: translateY(2px);
+        box-shadow: 
+            0 3px 0 #9077a8,
+            0 7px 14px rgba(176, 137, 198, 0.3);
+    }
+
+    /* Game Over */
     #gameOverContainer {
         margin-top: 30px;
         padding: 40px;
@@ -497,6 +560,7 @@
         display: none;
     }
 
+    /* Responsive */
     @media (max-width: 600px) {
         .chord-grid {
             grid-template-columns: repeat(3, 1fr);
@@ -532,11 +596,11 @@
             <img src="images/happy.png" alt="Character" class="character">
             <div class="difficulty-title">Choose Your Challenge!</div>
             <div class="difficulty-buttons">
-                <button class="difficulty-btn">
+                <button class="difficulty-btn" onclick="startGame('easy')">
                     🎵 Easy Mode
                     <span class="difficulty-subtitle">Major Chords Only</span>
                 </button>
-                <button class="difficulty-btn">
+                <button class="difficulty-btn" onclick="startGame('hard')">
                     🎸 Hard Mode
                     <span class="difficulty-subtitle">Major + Minor Chords</span>
                 </button>
@@ -546,8 +610,6 @@
 
     <!-- Game Screen -->
     <div class="game-container hidden" id="gameScreen">
-        <button class="back-button" id="backBtn">← Back to Menu</button>
-
         <h1>🎸 Chord Quest</h1>
         <h2>Test your ear's power!</h2>
         
@@ -555,6 +617,9 @@
             <img id="characterImg" src="images/happy.png" alt="Character" class="character">
             <div id="characterMessage" class="character-message">Ready to play!</div>
         </div>
+
+        <!-- Back Button -->
+        <button class="back-button" id="backBtn">← Back to Menu</button>
 
         <div class="score-container">
             <div class="score">
@@ -579,11 +644,381 @@
         <div id="gameOverContainer" class="hidden"></div>
     </div>
 
-    <!-- Load Modules -->
-    <script src="js/audio.js"></script>
-    <script src="js/hints.js"></script>
-    <script src="js/game.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/main.js"></script>
+    <script>
+    // CHORD DATA
+    const MAJOR_CHORDS = {
+        'C': { root: 130.81, notes: [130.81, 164.81, 196.00], type: 'major' },
+        'C#': { root: 138.59, notes: [138.59, 174.61, 207.65], type: 'major' },
+        'D': { root: 146.83, notes: [146.83, 185.00, 220.00], type: 'major' },
+        'Eb': { root: 155.56, notes: [155.56, 196.00, 233.08], type: 'major' },
+        'E': { root: 164.81, notes: [164.81, 207.65, 246.94], type: 'major' },
+        'F': { root: 174.61, notes: [174.61, 220.00, 261.63], type: 'major' },
+        'F#': { root: 185.00, notes: [185.00, 233.08, 277.18], type: 'major' },
+        'G': { root: 196.00, notes: [196.00, 246.94, 293.66], type: 'major' },
+        'Ab': { root: 207.65, notes: [207.65, 261.63, 311.13], type: 'major' },
+        'A': { root: 220.00, notes: [220.00, 277.18, 329.63], type: 'major' },
+        'Bb': { root: 233.08, notes: [233.08, 293.66, 349.23], type: 'major' },
+        'B': { root: 246.94, notes: [246.94, 311.13, 369.99], type: 'major' }
+    };
+
+    const MINOR_CHORDS = {
+        'Cm': { root: 130.81, notes: [130.81, 155.56, 196.00], type: 'minor' },
+        'C#m': { root: 138.59, notes: [138.59, 164.81, 207.65], type: 'minor' },
+        'Dm': { root: 146.83, notes: [146.83, 174.61, 220.00], type: 'minor' },
+        'Ebm': { root: 155.56, notes: [155.56, 185.00, 233.08], type: 'minor' },
+        'Em': { root: 164.81, notes: [164.81, 196.00, 246.94], type: 'minor' },
+        'Fm': { root: 174.61, notes: [174.61, 207.65, 261.63], type: 'minor' },
+        'F#m': { root: 185.00, notes: [185.00, 220.00, 277.18], type: 'minor' },
+        'Gm': { root: 196.00, notes: [196.00, 233.08, 293.66], type: 'minor' },
+        'Abm': { root: 207.65, notes: [207.65, 246.94, 311.13], type: 'minor' },
+        'Am': { root: 220.00, notes: [220.00, 261.63, 329.63], type: 'minor' },
+        'Bbm': { root: 233.08, notes: [233.08, 277.18, 349.23], type: 'minor' },
+        'Bm': { root: 246.94, notes: [246.94, 293.66, 369.99], type: 'minor' }
+    };
+
+    let CHORDS = {};
+    let currentDifficulty = 'easy';
+    let currentChord = null;
+    let correctCount = 0;
+    let attemptCount = 0;
+    const MAX_ATTEMPTS = 20;
+    let hasGuessed = false;
+    let audioContext = null;
+
+    // START GAME
+    function startGame(difficulty) {
+        currentDifficulty = difficulty;
+        
+        // Reset everything when starting
+        correctCount = 0;
+        attemptCount = 0;
+        hasGuessed = false;
+        currentChord = null;
+        
+        if (difficulty === 'easy') {
+            CHORDS = { ...MAJOR_CHORDS };
+            document.getElementById('difficultyBadge').textContent = '🎵 Easy Mode';
+        } else {
+            CHORDS = { ...MAJOR_CHORDS, ...MINOR_CHORDS };
+            document.getElementById('difficultyBadge').textContent = '🎸 Hard Mode';
+        }
+        
+        document.getElementById('startScreen').classList.add('hidden');
+        document.getElementById('gameScreen').classList.remove('hidden');
+        
+        // Reset character to happy and default message
+        updateCharacter('happy', 'Ready to play!');
+        
+        // Reset UI
+        document.getElementById('feedbackContainer').innerHTML = '';
+        document.getElementById('gameOverContainer').classList.add('hidden');
+        
+        createChordButtons();
+        updateScore();
+        nextRound();
+    }
+
+    // CREATE BUTTONS
+    function createChordButtons() {
+        const grid = document.getElementById('chordGrid');
+        grid.innerHTML = '';
+        
+        Object.keys(CHORDS).forEach(function(chordName) {
+            const button = document.createElement('button');
+            button.className = 'chord-btn';
+            button.textContent = chordName;
+            button.onclick = function() {
+                handleGuess(chordName, button);
+            };
+            grid.appendChild(button);
+        });
+    }
+
+    // HANDLE GUESS
+    function handleGuess(guessedChord, button) {
+        if (hasGuessed || !currentChord) return;
+        
+        hasGuessed = true;
+        attemptCount++;
+        
+        const allButtons = document.querySelectorAll('.chord-btn');
+        allButtons.forEach(btn => btn.disabled = true);
+        
+        const isCorrect = (guessedChord === currentChord);
+        
+        if (isCorrect) {
+            correctCount++;
+            button.classList.add('correct');
+            updateCharacter('happy', '🎉 Amazing! You got it right!');
+            showFeedback(true, `🎉 Correct! It was ${currentChord}`);
+        } else {
+            button.classList.add('incorrect');
+            allButtons.forEach(function(btn) {
+                if (btn.textContent === currentChord) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            const hintData = generateHint(guessedChord, currentChord);
+            updateCharacter(hintData.expression, hintData.hint);
+            showFeedback(false, '❌ ' + hintData.hint);
+        }
+        
+        updateScore();
+        
+        if (attemptCount >= MAX_ATTEMPTS) {
+            showGameOver();
+        }
+    }
+
+    // FEEDBACK
+    function showFeedback(isCorrect, message) {
+        const container = document.getElementById('feedbackContainer');
+        container.innerHTML = `
+            <div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">
+                ${message}
+            </div>
+            <button class="next-btn" onclick="nextRound()">Next Chord →</button>
+        `;
+    }
+
+    // UPDATE SCORE
+    function updateScore() {
+        document.getElementById('correct').textContent = correctCount;
+        document.getElementById('total').textContent = MAX_ATTEMPTS;
+        
+        // Update tries left
+        const triesLeft = MAX_ATTEMPTS - attemptCount;
+        document.getElementById('triesLeft').textContent = 'Tries Left: ' + triesLeft;
+        
+        if (attemptCount > 0) {
+            const accuracy = Math.round((correctCount / attemptCount) * 100);
+            document.getElementById('accuracy').textContent = 'Accuracy: ' + accuracy + '%';
+        } else {
+            document.getElementById('accuracy').textContent = '';
+        }
+    }
+
+    // RANDOM CHORD
+    function selectRandomChord() {
+        const chordNames = Object.keys(CHORDS);
+        const randomIndex = Math.floor(Math.random() * chordNames.length);
+        return chordNames[randomIndex];
+    }
+
+    // AUDIO
+    function initAudio() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return audioContext;
+    }
+
+    function playChord(chordName) {
+        const ctx = initAudio();
+        const chord = CHORDS[chordName];
+        const now = ctx.currentTime;
+        const duration = 2.0;
+        
+        chord.notes.forEach(function(frequency) {
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(frequency, now);
+            
+            const attack = 0.01;
+            const decay = 0.1;
+            const sustain = 0.7;
+            const release = 0.3;
+            
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.15, now + attack);
+            gainNode.gain.linearRampToValueAtTime(sustain * 0.15, now + attack + decay);
+            gainNode.gain.setValueAtTime(sustain * 0.15, now + duration - release);
+            gainNode.gain.linearRampToValueAtTime(0, now + duration);
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            
+            oscillator.start(now);
+            oscillator.stop(now + duration);
+        });
+    }
+
+    // NEXT ROUND
+    function nextRound() {
+        currentChord = selectRandomChord();
+        hasGuessed = false;
+        document.getElementById('feedbackContainer').innerHTML = '';
+        
+        const allButtons = document.querySelectorAll('.chord-btn');
+        allButtons.forEach(function(btn) {
+            btn.disabled = false;
+            btn.classList.remove('correct', 'incorrect');
+        });
+        
+        document.getElementById('playBtn').disabled = false;
+    }
+
+    // RESET CURRENT DIFFICULTY
+    function resetGame() {
+        // Only reset score and attempts, keep same difficulty
+        correctCount = 0;
+        attemptCount = 0;
+        hasGuessed = false;
+        currentChord = null;
+        
+        // Reset character to happy and default message
+        updateCharacter('happy', 'Ready to play again!');
+        
+        // Reset UI
+        document.getElementById('feedbackContainer').innerHTML = '';
+        document.getElementById('gameOverContainer').classList.add('hidden');
+        
+        // Update display
+        updateScore();
+        
+        // Reset all buttons
+        const allButtons = document.querySelectorAll('.chord-btn');
+        allButtons.forEach(function(btn) {
+            btn.disabled = false;
+            btn.classList.remove('correct', 'incorrect');
+        });
+        
+        document.getElementById('playBtn').disabled = false;
+        
+        // Start new round
+        nextRound();
+    }
+    
+    // BACK TO MAIN MENU
+    function backToMenu() {
+        // Hide game screen, show start screen
+        document.getElementById('gameScreen').classList.add('hidden');
+        document.getElementById('startScreen').classList.remove('hidden');
+        
+        // Reset all game state
+        correctCount = 0;
+        attemptCount = 0;
+        hasGuessed = false;
+        currentChord = null;
+        
+        // Clear any feedback
+        document.getElementById('feedbackContainer').innerHTML = '';
+        document.getElementById('gameOverContainer').classList.add('hidden');
+    }
+
+    // GAME OVER
+    function showGameOver() {
+        const finalAccuracy = Math.round((correctCount / MAX_ATTEMPTS) * 100);
+        const container = document.getElementById('gameOverContainer');
+        
+        let message = '';
+        if (finalAccuracy >= 90) message = '🌟 Outstanding!';
+        else if (finalAccuracy >= 70) message = '🎵 Great job!';
+        else if (finalAccuracy >= 50) message = '👍 Good effort!';
+        else message = '🎸 Keep practicing!';
+        
+        container.innerHTML = `
+            <h2>${message}</h2>
+            <p>Final Score: ${correctCount} / ${MAX_ATTEMPTS}</p>
+            <p>Accuracy: ${finalAccuracy}%</p>
+            <button class="next-btn" onclick="resetGame()">Play Again (Same Difficulty)</button>
+            <button class="next-btn" onclick="backToMenu()" style="background: linear-gradient(135deg, #8b7c9e 0%, #6d5f7a 100%); box-shadow: 0 5px 0 #5a4d66, 0 9px 18px rgba(139, 124, 158, 0.4); margin-top: 10px;">Back to Menu</button>
+        `;
+        
+        container.classList.remove('hidden');
+        document.getElementById('playBtn').disabled = true;
+        document.querySelectorAll('.chord-btn').forEach(btn => btn.disabled = true);
+    }
+
+    // CHARACTER
+    function updateCharacter(expression, message) {
+        const characterImg = document.getElementById('characterImg');
+        const characterMessage = document.getElementById('characterMessage');
+        
+        characterImg.src = `images/${expression}.png`;
+        characterMessage.textContent = message;
+        
+        if (expression === 'happy') {
+            characterImg.classList.add('bounce-anim');
+            setTimeout(() => characterImg.classList.remove('bounce-anim'), 600);
+        }
+    }
+
+    // HINTS
+    function getSemitoneDistance(chord1, chord2) {
+        const getRoot = (name) => {
+            const rootName = name.replace('m', '');
+            const map = {
+                'C': 0, 'C#': 1, 'D': 2, 'Eb': 3, 'E': 4, 'F': 5,
+                'F#': 6, 'G': 7, 'Ab': 8, 'A': 9, 'Bb': 10, 'B': 11
+            };
+            return map[rootName];
+        };
+        
+        const pos1 = getRoot(chord1);
+        const pos2 = getRoot(chord2);
+        const distance = Math.abs(pos1 - pos2);
+        return Math.min(distance, 12 - distance);
+    }
+
+    function generateHint(guessed, correct) {
+        const distance = getSemitoneDistance(guessed, correct);
+        const guessedType = guessed.includes('m') ? 'minor' : 'major';
+        const correctType = correct.includes('m') ? 'minor' : 'major';
+        
+        let hint = '';
+        let expression = 'thinking';
+        
+        // Same root, different quality
+        if (guessed.replace('m', '') === correct.replace('m', '')) {
+            hint = `💡 Same root note, but you guessed ${guessedType} instead of ${correctType}! Listen for the mood.`;
+            expression = 'lightbulb';
+        }
+        // Very close
+        else if (distance === 1) {
+            hint = `💡 So close! Only one half-step away from ${correct}!`;
+            expression = 'lightbulb';
+        }
+        // Close
+        else if (distance === 2) {
+            hint = `💡 You're close! Just 2 semitones from ${correct}.`;
+            expression = 'lightbulb';
+        }
+        // Perfect 5th
+        else if (distance === 7) {
+            hint = `🎵 You heard the dominant (5th) relationship! ${guessed} and ${correct} are related.`;
+            expression = 'lightbulb';
+        }
+        // Perfect 4th
+        else if (distance === 5) {
+            hint = `🎵 You heard the subdominant (4th) relationship!`;
+            expression = 'lightbulb';
+        }
+        // Far off
+        else {
+            hint = `🤔 The answer was ${correct}. Listen for the root note and the mood (major/minor).`;
+            expression = 'thinking';
+        }
+        
+        return { hint, expression };
+    }
+
+    // INIT
+    window.addEventListener('DOMContentLoaded', function() {
+        const playButton = document.getElementById('playBtn');
+        playButton.addEventListener('click', function() {
+            if (currentChord) playChord(currentChord);
+        });
+        
+        const resetButton = document.getElementById('resetBtn');
+        resetButton.addEventListener('click', resetGame);
+        
+        const backButton = document.getElementById('backBtn');
+        backButton.addEventListener('click', backToMenu);
+    });
+    </script>
 </body>
 </html>
