@@ -13,6 +13,11 @@ class ChordGame {
         this.currentChord = null;
         this.correctCount = 0;
         this.attemptCount = 0;
+        this.streak = 0;
+        this.bestStreak = 0;
+        this.bestScore = 0;
+        this.bestAccuracy = 0;
+        this.sessionsPlayed = 0;
         this.hasGuessed = false;
         this.MAX_ATTEMPTS = 20;
 
@@ -37,6 +42,9 @@ class ChordGame {
 
             this.difficulty = difficulty;
             this.resetGameState();
+            this.bestScore = this.loadBestScore();
+            this.bestAccuracy = this.loadBestAccuracy();
+            this.sessionsPlayed = this.loadSessionsPlayed();
 
             console.log(`Game started: ${difficulty} mode`);
             return true;
@@ -53,7 +61,108 @@ class ChordGame {
         this.currentChord = null;
         this.correctCount = 0;
         this.attemptCount = 0;
+        this.streak = 0;
+        this.bestStreak = 0;
         this.hasGuessed = false;
+    }
+
+    /**
+     * Load best score for the selected difficulty
+     * @returns {number} Best score
+     */
+    loadBestScore() {
+        try {
+            if (!this.difficulty || typeof localStorage === 'undefined') {
+                return 0;
+            }
+
+            const value = localStorage.getItem(`chordQuestBestScore:${this.difficulty}`);
+            return Number.parseInt(value, 10) || 0;
+        } catch (error) {
+            console.warn('Could not load best score:', error);
+            return 0;
+        }
+    }
+
+    /**
+     * Save best score for the selected difficulty
+     */
+    saveBestScore() {
+        try {
+            if (!this.difficulty || typeof localStorage === 'undefined') {
+                return;
+            }
+
+            localStorage.setItem(`chordQuestBestScore:${this.difficulty}`, String(this.bestScore));
+        } catch (error) {
+            console.warn('Could not save best score:', error);
+        }
+    }
+
+    /**
+     * Load best accuracy for the selected difficulty
+     * @returns {number} Best accuracy percentage
+     */
+    loadBestAccuracy() {
+        try {
+            if (!this.difficulty || typeof localStorage === 'undefined') {
+                return 0;
+            }
+
+            const value = localStorage.getItem(`chordQuestBestAccuracy:${this.difficulty}`);
+            return Number.parseInt(value, 10) || 0;
+        } catch (error) {
+            console.warn('Could not load best accuracy:', error);
+            return 0;
+        }
+    }
+
+    /**
+     * Save best accuracy for the selected difficulty
+     */
+    saveBestAccuracy() {
+        try {
+            if (!this.difficulty || typeof localStorage === 'undefined') {
+                return;
+            }
+
+            localStorage.setItem(`chordQuestBestAccuracy:${this.difficulty}`, String(this.bestAccuracy));
+        } catch (error) {
+            console.warn('Could not save best accuracy:', error);
+        }
+    }
+
+    /**
+     * Load completed sessions for the selected difficulty
+     * @returns {number} Sessions played
+     */
+    loadSessionsPlayed() {
+        try {
+            if (!this.difficulty || typeof localStorage === 'undefined') {
+                return 0;
+            }
+
+            const value = localStorage.getItem(`chordQuestSessions:${this.difficulty}`);
+            return Number.parseInt(value, 10) || 0;
+        } catch (error) {
+            console.warn('Could not load sessions played:', error);
+            return 0;
+        }
+    }
+
+    /**
+     * Save completed sessions for the selected difficulty
+     */
+    saveSessionsPlayed() {
+        try {
+            if (!this.difficulty || typeof localStorage === 'undefined') {
+                return;
+            }
+
+            localStorage.setItem(`chordQuestSessions:${this.difficulty}`, String(this.sessionsPlayed));
+        } catch (error) {
+            console.warn('Could not save sessions played:', error);
+        }
     }
 
     /**
@@ -166,8 +275,15 @@ class ChordGame {
 
             if (isCorrect) {
                 this.correctCount++;
+                this.streak++;
+                this.bestStreak = Math.max(this.bestStreak, this.streak);
+                if (this.correctCount > this.bestScore) {
+                    this.bestScore = this.correctCount;
+                    this.saveBestScore();
+                }
                 this.procesCorrectGuess();
             } else {
+                this.streak = 0;
                 this.processIncorrectGuess(guessedChord);
             }
 
@@ -237,7 +353,14 @@ class ChordGame {
                 correct: this.correctCount,
                 total: this.MAX_ATTEMPTS,
                 accuracy: accuracy,
-                triesLeft: triesLeft
+                triesLeft: triesLeft,
+                attempts: this.attemptCount,
+                streak: this.streak,
+                bestStreak: this.bestStreak,
+                bestScore: this.bestScore,
+                bestAccuracy: this.bestAccuracy,
+                sessionsPlayed: this.sessionsPlayed,
+                round: Math.min(this.attemptCount + 1, this.MAX_ATTEMPTS)
             });
         }
     }
@@ -248,6 +371,13 @@ class ChordGame {
      */
     endGame() {
         const finalAccuracy = Math.round((this.correctCount / this.MAX_ATTEMPTS) * 100);
+        this.sessionsPlayed++;
+        this.saveSessionsPlayed();
+
+        if (finalAccuracy > this.bestAccuracy) {
+            this.bestAccuracy = finalAccuracy;
+            this.saveBestAccuracy();
+        }
 
         let message = '';
         if (finalAccuracy >= 90) message = '🌟 Outstanding!';
@@ -260,9 +390,39 @@ class ChordGame {
                 message: message,
                 score: this.correctCount,
                 total: this.MAX_ATTEMPTS,
-                accuracy: finalAccuracy
+                accuracy: finalAccuracy,
+                bestScore: this.bestScore,
+                bestAccuracy: this.bestAccuracy,
+                bestStreak: this.bestStreak,
+                sessionsPlayed: this.sessionsPlayed,
+                recommendation: this.getPracticeRecommendation(finalAccuracy)
             });
         }
+    }
+
+    /**
+     * Recommend the next practice focus based on session performance
+     * @param {number} finalAccuracy - Final session accuracy
+     * @returns {string} Practice recommendation
+     */
+    getPracticeRecommendation(finalAccuracy) {
+        if (finalAccuracy >= 90 && this.difficulty === 'easy') {
+            return 'You are ready for Hard Mode. Add minor chords and listen for the middle note quality.';
+        }
+
+        if (finalAccuracy >= 85) {
+            return 'Strong session. Try replaying each chord only once next time to build faster recognition.';
+        }
+
+        if (this.bestStreak < 3) {
+            return 'Focus on consistency: listen for the bass note first, then decide whether the chord feels major or minor.';
+        }
+
+        if (finalAccuracy < 60) {
+            return 'Slow the session down and replay each chord twice: once for the root, once for the chord quality.';
+        }
+
+        return 'Good progress. Keep practicing short sessions and pay attention to the hints after close guesses.';
     }
 
     /**
@@ -275,6 +435,11 @@ class ChordGame {
             currentChord: this.currentChord,
             correctCount: this.correctCount,
             attemptCount: this.attemptCount,
+            streak: this.streak,
+            bestStreak: this.bestStreak,
+            bestScore: this.bestScore,
+            bestAccuracy: this.bestAccuracy,
+            sessionsPlayed: this.sessionsPlayed,
             hasGuessed: this.hasGuessed,
             isGameOver: this.attemptCount >= this.MAX_ATTEMPTS
         };

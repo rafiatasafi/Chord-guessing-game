@@ -1,29 +1,16 @@
-# 🎸 Chord Quest - Retro Ear Training Adventure
+# 🎸 Chord Quest
 
-An interactive, retro-styled web application that helps musicians develop their ear training skills through chord recognition. Built with vanilla JavaScript, Web Audio API, and featuring an adorable chibi character guide!
+Chord Quest is an interactive ear-training game that helps musicians practice chord recognition through real-time audio synthesis, music-theory hints, and session analytics. It is built with vanilla JavaScript and the Web Audio API, with no external audio files or build step.
 
 ## 🎵 Live Demo
 
 [Play the game here](https://rafiatasafi.github.io/Chord-guessing-game/)
 
-## ✨ Features
+## ✨ Highlights
 
-### 🎮 Game Modes
+### 🎮 Practice Modes
 - **Easy Mode**: Practice identifying 12 major chords (C, C#, D, Eb, E, F, F#, G, Ab, A, Bb, B)
 - **Hard Mode**: Challenge yourself with 24 chords - all major chords PLUS their minor counterparts!
-
-### 🎨 Retro Design
-- Beautiful retro aesthetic with soft pastel colors inspired by 70s/80s music culture
-- Smooth animations and playful UI elements
-- Custom Google Fonts (Fredoka & Righteous) for that vintage vibe
-- Floating music notes background decoration
-- 3D button effects with press animations
-
-### 🎭 Character Guide
-- Cute chibi character with headphones provides emotional feedback
-- **Happy Expression** 😊 - When you get it right!
-- **Thinking Expression** 🤔 - When you're off track
-- **Lightbulb Expression** 💡 - When you're close or making progress
 
 ### 🧠 Smart Hint System (Music Theory)
 Get intelligent feedback based on your guess:
@@ -33,17 +20,23 @@ Get intelligent feedback based on your guess:
 - **Same root, different quality**: Helps distinguish major vs minor
 - **Distance-based hints**: Learn interval relationships
 
-### 📊 Progress Tracking
-- Real-time score display (correct/total)
-- Accuracy percentage calculation
-- Tries remaining counter
-- Performance-based feedback at game end
+### 📊 Session Analytics
+- Real-time score, accuracy, streak, round count, and progress bar
+- Persistent best score and best accuracy per difficulty using `localStorage`
+- End-of-session practice recommendation based on accuracy and streak
+- Performance summary with sessions completed
 
 ### 🎵 Audio Technology
 - Real-time chord synthesis using Web Audio API
 - Guitar-like tones with ADSR envelope (Attack, Decay, Sustain, Release)
 - Sawtooth waveforms for realistic sound
 - No external audio files needed!
+
+### 🎨 Product Polish
+- Responsive dashboard-style interface
+- Keyboard shortcuts for faster practice
+- Answer reveal after every guess
+- Friendly character feedback without blocking the learning flow
 
 ### 🎯 Game Flow
 1. **Start Screen**: Choose your difficulty level
@@ -58,7 +51,18 @@ Get intelligent feedback based on your guess:
 - **CSS3** - Advanced styling, gradients, animations, responsive design
 - **JavaScript (ES6)** - Game logic, state management, event handling
 - **Web Audio API** - Real-time audio synthesis with oscillators and gain nodes
+- **localStorage** - Persistent best scores, best accuracy, and session totals
 - **Google Fonts** - Fredoka & Righteous for retro typography
+
+## 🧩 Architecture
+
+The app is split into small modules so the project is easy to explain and extend:
+
+- `js/audio.js` - Web Audio synthesis and ADSR note playback
+- `js/game.js` - Game state, scoring, streaks, persistence, and recommendations
+- `js/hints.js` - Music-theory hint generation
+- `js/ui.js` - DOM updates, feedback states, score rendering, and game-over summary
+- `js/main.js` - Application wiring, event listeners, game flow, and chord data
 
 ## 🎮 How to Play
 
@@ -82,6 +86,9 @@ Get intelligent feedback based on your guess:
 - **🎵 Play Chord**: Play/replay the current chord
 - **🔄 Reset Score**: Start over with the same difficulty
 - **← Back to Menu**: Return to difficulty selection (loses progress)
+- **Space**: Play/replay chord
+- **Enter**: Move to the next chord after guessing
+- **Escape**: Return to menu
 
 ## 🚀 Installation & Setup
 
@@ -120,6 +127,12 @@ Chord-guessing-game/
 │   ├── happy.png          # Character - correct answer
 │   ├── lightbulb.png      # Character - hint/close
 │   └── thinking.png       # Character - try again
+├── js/
+│   ├── audio.js           # Web Audio API synthesis
+│   ├── game.js            # Game state and scoring
+│   ├── hints.js           # Music-theory hint engine
+│   ├── main.js            # App orchestration
+│   └── ui.js              # UI rendering
 └── README.md              # You are here!
 ```
 
@@ -169,6 +182,8 @@ C major (C, E, G) vs G major (G, B, D)
 ### Scoring System
 - Track correct answers out of 20 total attempts
 - Real-time accuracy percentage
+- Current streak and best streak
+- Persistent best score and best accuracy by difficulty
 - Tries remaining counter
 - No penalties for replaying chords
 
@@ -198,10 +213,11 @@ Planned features for future versions:
 - [ ] Customizable round count (10, 20, 30, etc.)
 - [ ] Dark mode toggle
 - [ ] Leaderboard with localStorage
-- [ ] Progress tracking across sessions
+- [x] Progress tracking across sessions
 - [ ] Tutorial/onboarding for new players
 - [ ] Different instrument sounds (piano, synth, etc.)
-- [ ] Accessibility improvements (keyboard controls, screen reader support)
+- [x] Keyboard controls
+- [ ] Additional screen reader improvements
 
 ## 🤝 Contributing
 
@@ -219,6 +235,7 @@ Building this project taught me:
 
 - **Web Audio API**: Real-time sound synthesis with oscillators, gain nodes, and ADSR envelopes
 - **Game State Management**: Tracking multiple variables and game flow
+- **Persistent Browser State**: Saving best scores and session history with `localStorage`
 - **Music Theory**: Intervals, chord construction, harmonic relationships
 - **CSS Animations**: Keyframes, transitions, transforms for smooth UX
 - **Responsive Design**: Mobile-first approach with media queries

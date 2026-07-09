@@ -90,7 +90,12 @@ function setupGameCallbacks() {
     };
 
     chordGame.onFeedback = (isCorrect, message) => {
-        gameUI.showFeedback(isCorrect, message, () => nextRound());
+        const gameState = chordGame.getState();
+        gameUI.showFeedback(
+            isCorrect,
+            message,
+            gameState.isGameOver ? null : () => nextRound()
+        );
     };
 
     chordGame.onCharacterUpdate = (expression, message) => {
@@ -136,14 +141,19 @@ function setupEventListeners() {
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (event) => {
+        if (!chordGame || !chordGame.difficulty) {
+            return;
+        }
+
         switch(event.key) {
             case ' ':
                 event.preventDefault();
                 playChord();
                 break;
             case 'Enter':
-                if (!chordGame.hasGuessed) {
-                    // Only on game screen
+                if (chordGame.hasGuessed && !chordGame.getState().isGameOver) {
+                    event.preventDefault();
+                    nextRound();
                 }
                 break;
             case 'Escape':
@@ -194,6 +204,7 @@ function startGame(difficulty) {
         gameUI.resetChordButtons();
         gameUI.clearFeedback();
         gameUI.hideGameOver();
+        chordGame.updateScore();
 
         // Start first round
         nextRound();
@@ -235,6 +246,8 @@ function handleGuess(chordName, button) {
             console.warn('Could not process guess');
             return;
         }
+
+        gameUI.markChordResult(chordName, chordGame.currentChord);
     } catch (error) {
         console.error('Error handling guess:', error);
         gameUI.showError('Error processing guess. Please try again.');
@@ -250,6 +263,7 @@ function nextRound() {
         gameUI.resetChordButtons();
         gameUI.clearFeedback();
         gameUI.setPlayButtonEnabled(true);
+        chordGame.updateScore();
     } catch (error) {
         console.error('Error starting next round:', error);
     }
@@ -267,7 +281,13 @@ function resetGame() {
             correct: 0,
             total: chordGame.MAX_ATTEMPTS,
             accuracy: 0,
-            triesLeft: chordGame.MAX_ATTEMPTS
+            triesLeft: chordGame.MAX_ATTEMPTS,
+            attempts: 0,
+            streak: 0,
+            bestScore: chordGame.bestScore,
+            bestAccuracy: chordGame.bestAccuracy,
+            sessionsPlayed: chordGame.sessionsPlayed,
+            round: 1
         });
         gameUI.updateCharacter('happy', 'Ready to play again!');
         gameUI.clearFeedback();

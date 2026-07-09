@@ -12,16 +12,32 @@
         box-sizing: border-box;
     }
 
+    :root {
+        --ink: #433b4f;
+        --muted: #756982;
+        --rose: #d76f8a;
+        --plum: #8d70b2;
+        --mint: #5fae83;
+        --paper: #fffaf7;
+        --panel: rgba(255, 255, 255, 0.88);
+        --line: rgba(126, 105, 151, 0.18);
+        --shadow: 0 24px 70px rgba(104, 85, 121, 0.18);
+    }
+
     body {
         font-family: 'Fredoka', sans-serif;
-        background: linear-gradient(135deg, #f4e4d7 0%, #e8d5c4 100%);
+        background:
+            radial-gradient(circle at top left, rgba(215, 111, 138, 0.18), transparent 30%),
+            radial-gradient(circle at bottom right, rgba(95, 174, 131, 0.2), transparent 32%),
+            linear-gradient(135deg, #fff8f0 0%, #eef7f2 48%, #f3edf8 100%);
         min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 20px;
+        padding: 28px;
         position: relative;
         overflow-x: hidden;
+        color: var(--ink);
     }
 
     body::before {
@@ -50,56 +66,76 @@
     }
 
     .game-container {
-        background: #fff;
-        border-radius: 30px;
-        padding: 50px;
-        max-width: 800px;
+        background: var(--panel);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 24px;
+        padding: 42px;
+        max-width: 920px;
         width: 100%;
-        box-shadow: 
-            0 20px 60px rgba(176, 137, 198, 0.3),
-            0 0 0 10px rgba(255, 255, 255, 0.5),
-            0 0 0 20px rgba(176, 137, 198, 0.1);
+        box-shadow: var(--shadow);
         position: relative;
+        backdrop-filter: blur(16px);
     }
 
     .game-container::before,
     .game-container::after {
-        content: '';
-        position: absolute;
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, #d198a9 0%, #b089c6 100%);
-        border-radius: 50%;
-    }
-
-    .game-container::before {
-        top: -10px;
-        left: -10px;
-    }
-
-    .game-container::after {
-        bottom: -10px;
-        right: -10px;
+        content: none;
     }
 
     h1 {
         font-family: 'Righteous', cursive;
         text-align: center;
-        background: linear-gradient(135deg, #d198a9 0%, #b089c6 100%);
+        background: linear-gradient(135deg, var(--rose) 0%, var(--plum) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         margin-bottom: 10px;
-        font-size: 3em;
-        text-shadow: 2px 2px 4px rgba(176, 137, 198, 0.2);
+        font-size: 3.2em;
     }
 
     h2 {
         text-align: center;
-        color: #8b7c9e;
+        color: var(--muted);
         margin-bottom: 20px;
         font-size: 1.3em;
         font-weight: 400;
+    }
+
+    .app-kicker {
+        color: var(--mint);
+        font-size: 0.9em;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        margin-bottom: 8px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .feature-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 24px 0 30px;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.68);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+        text-align: left;
+    }
+
+    .feature-card strong {
+        color: var(--ink);
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .feature-card span {
+        color: var(--muted);
+        font-size: 0.95em;
+        line-height: 1.35;
     }
 
     .start-screen {
@@ -121,7 +157,7 @@
 
     .difficulty-title {
         font-size: 1.8em;
-        color: #b089c6;
+        color: var(--plum);
         margin-bottom: 30px;
         font-weight: 600;
     }
@@ -134,12 +170,12 @@
     }
 
     .difficulty-btn {
-        background: linear-gradient(135deg, #d198a9 0%, #b089c6 100%);
+        background: linear-gradient(135deg, var(--rose) 0%, var(--plum) 100%);
         color: white;
         border: none;
         padding: 30px 50px;
         font-size: 1.5em;
-        border-radius: 20px;
+        border-radius: 18px;
         cursor: pointer;
         font-family: 'Fredoka', sans-serif;
         font-weight: 600;
@@ -177,7 +213,7 @@
         position: absolute;
         top: 20px;
         left: 20px;
-        background: linear-gradient(135deg, #8b7c9e 0%, #6d5f7a 100%);
+        background: linear-gradient(135deg, var(--plum) 0%, #6d5f7a 100%);
         color: white;
         border: none;
         padding: 10px 20px;
@@ -219,13 +255,13 @@
     .character-message {
         margin-top: 10px;
         font-size: 1.1em;
-        color: #8b7c9e;
+        color: var(--muted);
         font-weight: 600;
         min-height: 30px;
-        background: linear-gradient(135deg, rgba(209, 152, 169, 0.1) 0%, rgba(176, 137, 198, 0.1) 100%);
+        background: rgba(255, 255, 255, 0.65);
         padding: 15px;
         border-radius: 15px;
-        border: 2px solid rgba(176, 137, 198, 0.2);
+        border: 1px solid var(--line);
     }
 
     .character.bounce-anim {
@@ -233,23 +269,68 @@
     }
 
     .score-container {
-        background: linear-gradient(135deg, rgba(209, 152, 169, 0.15) 0%, rgba(176, 137, 198, 0.15) 100%);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.76) 0%, rgba(246, 239, 249, 0.76) 100%);
         padding: 20px;
-        border-radius: 20px;
+        border-radius: 18px;
         margin-bottom: 20px;
-        border: 3px solid rgba(176, 137, 198, 0.3);
+        border: 1px solid var(--line);
+    }
+
+    .stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin: 15px 0;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .stat-label {
+        color: var(--muted);
+        font-size: 0.85em;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .stat-value {
+        color: var(--rose);
+        display: block;
+        font-size: 1.45em;
+        font-weight: 700;
+        margin-top: 4px;
+    }
+
+    .progress-shell {
+        background: rgba(117, 105, 130, 0.16);
+        border-radius: 999px;
+        height: 14px;
+        overflow: hidden;
+        margin-top: 15px;
+    }
+
+    .progress-bar {
+        background: linear-gradient(135deg, var(--mint) 0%, var(--rose) 100%);
+        height: 100%;
+        width: 0%;
+        transition: width 0.35s ease;
     }
 
     .score {
         text-align: center;
         font-size: 1.5em;
-        color: #8b7c9e;
+        color: var(--muted);
         margin-bottom: 10px;
         font-weight: 600;
     }
 
     .score span {
-        color: #d198a9;
+        color: var(--rose);
         font-weight: 700;
         font-size: 1.2em;
     }
@@ -257,21 +338,21 @@
     .tries-left {
         text-align: center;
         font-size: 1.2em;
-        color: #d67a8a;
+        color: var(--rose);
         margin-bottom: 10px;
         font-weight: 600;
     }
 
     .accuracy {
         text-align: center;
-        color: #b089c6;
+        color: var(--plum);
         font-size: 1.1em;
         font-weight: 600;
     }
 
     .difficulty-badge {
         display: inline-block;
-        background: linear-gradient(135deg, #d198a9 0%, #b089c6 100%);
+        background: linear-gradient(135deg, var(--rose) 0%, var(--plum) 100%);
         color: white;
         padding: 8px 20px;
         border-radius: 20px;
@@ -290,12 +371,12 @@
     }
 
     .play-button {
-        background: linear-gradient(135deg, #91c9a8 0%, #6fb890 100%);
+        background: linear-gradient(135deg, var(--mint) 0%, #72bf9b 100%);
         color: white;
         border: none;
         padding: 20px 50px;
         font-size: 1.4em;
-        border-radius: 50px;
+        border-radius: 999px;
         cursor: pointer;
         font-family: 'Fredoka', sans-serif;
         font-weight: 600;
@@ -325,26 +406,24 @@
     }
 
     .reset-button {
-        background: linear-gradient(135deg, #e89ba8 0%, #d67a8a 100%);
-        color: white;
-        border: none;
+        background: white;
+        border: 2px solid rgba(215, 111, 138, 0.28);
+        color: var(--rose);
         padding: 15px 35px;
         font-size: 1.2em;
-        border-radius: 50px;
+        border-radius: 999px;
         cursor: pointer;
         font-family: 'Fredoka', sans-serif;
         font-weight: 600;
-        box-shadow: 
-            0 5px 0 #b85f6f,
-            0 9px 18px rgba(214, 122, 138, 0.4);
+        box-shadow: 0 5px 0 rgba(215, 111, 138, 0.18);
         transition: all 0.2s;
     }
 
     .reset-button:hover {
         transform: translateY(-2px);
-        box-shadow: 
-            0 7px 0 #b85f6f,
-            0 11px 22px rgba(214, 122, 138, 0.5);
+        box-shadow:
+            0 7px 0 rgba(215, 111, 138, 0.22),
+            0 11px 22px rgba(214, 122, 138, 0.24);
     }
 
     .guess-section {
@@ -353,7 +432,7 @@
 
     .section-title {
         font-size: 1.3em;
-        color: #8b7c9e;
+        color: var(--muted);
         margin-bottom: 20px;
         font-weight: 600;
         text-align: center;
@@ -367,38 +446,45 @@
 
     .chord-btn {
         padding: 20px;
-        border: 3px solid #e8d5c4;
+        border: 1px solid rgba(126, 105, 151, 0.22);
         background: white;
-        border-radius: 15px;
+        border-radius: 12px;
         cursor: pointer;
         transition: all 0.3s;
         font-size: 1.2em;
         font-weight: 600;
-        color: #8b7c9e;
+        color: var(--ink);
         font-family: 'Fredoka', sans-serif;
-        box-shadow: 0 4px 0 #e8d5c4;
+        box-shadow: 0 4px 0 rgba(126, 105, 151, 0.14);
         position: relative;
     }
 
     .chord-btn:hover:not(:disabled) {
-        border-color: #d198a9;
-        background: linear-gradient(135deg, rgba(209, 152, 169, 0.1) 0%, rgba(176, 137, 198, 0.1) 100%);
+        border-color: rgba(215, 111, 138, 0.45);
+        background: linear-gradient(135deg, rgba(215, 111, 138, 0.1) 0%, rgba(141, 112, 178, 0.1) 100%);
         transform: translateY(-3px);
-        box-shadow: 0 7px 0 #e8d5c4;
+        box-shadow: 0 7px 0 rgba(126, 105, 151, 0.14);
     }
 
     .chord-btn.correct {
-        background: linear-gradient(135deg, #91c9a8 0%, #6fb890 100%);
+        background: linear-gradient(135deg, var(--mint) 0%, #72bf9b 100%);
         color: white;
         border-color: #6fb890;
         animation: correctPulse 0.5s;
     }
 
     .chord-btn.incorrect {
-        background: linear-gradient(135deg, #e89ba8 0%, #d67a8a 100%);
+        background: linear-gradient(135deg, #e89ba8 0%, var(--rose) 100%);
         color: white;
         border-color: #d67a8a;
         animation: shake 0.5s;
+    }
+
+    .chord-btn.revealed {
+        background: linear-gradient(135deg, var(--mint) 0%, #72bf9b 100%);
+        color: white;
+        border-color: #6fb890;
+        box-shadow: 0 4px 0 #5a9c78;
     }
 
     .chord-btn:disabled {
@@ -420,7 +506,7 @@
     .feedback {
         margin-top: 25px;
         padding: 25px;
-        border-radius: 20px;
+        border-radius: 16px;
         text-align: center;
         font-weight: 600;
         font-size: 1.1em;
@@ -446,7 +532,7 @@
     }
 
     .next-btn {
-        background: linear-gradient(135deg, #d198a9 0%, #b089c6 100%);
+        background: linear-gradient(135deg, var(--rose) 0%, var(--plum) 100%);
         color: white;
         border: none;
         padding: 18px 40px;
@@ -470,17 +556,33 @@
             0 11px 22px rgba(176, 137, 198, 0.5);
     }
 
+    .feedback-actions {
+        margin-top: 15px;
+    }
+
+    .feedback-actions .next-btn {
+        margin-top: 0;
+    }
+
+    .shortcut-hint {
+        color: var(--muted);
+        font-size: 0.95em;
+        font-weight: 600;
+        margin-top: 12px;
+        text-align: center;
+    }
+
     #gameOverContainer {
         margin-top: 30px;
-        padding: 40px;
-        background: linear-gradient(135deg, rgba(209, 152, 169, 0.15) 0%, rgba(176, 137, 198, 0.15) 100%);
-        border-radius: 25px;
+        padding: 34px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.76) 0%, rgba(239, 248, 244, 0.78) 100%);
+        border-radius: 18px;
         text-align: center;
-        border: 3px solid rgba(176, 137, 198, 0.3);
+        border: 1px solid var(--line);
     }
 
     #gameOverContainer h2 {
-        color: #d198a9;
+        color: var(--rose);
         margin-bottom: 20px;
         font-size: 2.5em;
         font-family: 'Righteous', cursive;
@@ -488,13 +590,56 @@
 
     #gameOverContainer p {
         font-size: 1.3em;
-        color: #8b7c9e;
+        color: var(--muted);
         margin-bottom: 15px;
         font-weight: 600;
     }
 
+    .recommendation {
+        background: rgba(95, 174, 131, 0.12);
+        border: 1px solid rgba(95, 174, 131, 0.26);
+        border-radius: 14px;
+        color: var(--ink);
+        font-size: 1.05em;
+        line-height: 1.45;
+        margin: 20px 0;
+        padding: 16px;
+        text-align: left;
+    }
+
+    .recommendation strong {
+        color: var(--mint);
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .next-btn.secondary-action {
+        background: linear-gradient(135deg, var(--plum) 0%, #6d5f7a 100%);
+        box-shadow: 0 5px 0 #5a4d66, 0 9px 18px rgba(139, 124, 158, 0.4);
+        margin-top: 10px;
+    }
+
     .hidden {
         display: none;
+    }
+
+    @media (max-width: 760px) {
+        body {
+            padding: 16px;
+        }
+
+        .game-container {
+            padding: 26px;
+        }
+
+        .back-button {
+            position: static;
+            margin-bottom: 18px;
+        }
+
+        .play-section {
+            margin-bottom: 28px;
+        }
     }
 
     @media (max-width: 600px) {
@@ -509,6 +654,14 @@
         
         .game-container {
             padding: 30px;
+        }
+
+        .stat-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .feature-strip {
+            grid-template-columns: 1fr;
         }
         
         .difficulty-buttons {
@@ -525,11 +678,26 @@
 <body>
     <!-- Start Screen -->
     <div class="game-container" id="startScreen">
+        <div class="app-kicker">Interactive Ear Training</div>
         <h1>🎸 Chord Quest</h1>
         <h2>Retro Ear Training Adventure</h2>
         
         <div class="start-screen">
             <img src="images/happy.png" alt="Character" class="character">
+            <div class="feature-strip">
+                <div class="feature-card">
+                    <strong>Real Audio Synthesis</strong>
+                    <span>Chords are generated live with the Web Audio API.</span>
+                </div>
+                <div class="feature-card">
+                    <strong>Music-Theory Hints</strong>
+                    <span>Feedback explains roots, quality, intervals, and shared tones.</span>
+                </div>
+                <div class="feature-card">
+                    <strong>Session Analytics</strong>
+                    <span>Track streaks, best scores, accuracy, and next practice focus.</span>
+                </div>
+            </div>
             <div class="difficulty-title">Choose Your Challenge!</div>
             <div class="difficulty-buttons">
                 <button class="difficulty-btn">
@@ -560,8 +728,29 @@
             <div class="score">
                 Score: <span id="correct">0</span> / <span id="total">20</span>
             </div>
+            <div class="stat-row">
+                <div class="stat-card">
+                    <span class="stat-label">Streak</span>
+                    <span class="stat-value" id="streak">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Best Score</span>
+                    <span class="stat-value" id="bestScore">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Best Accuracy</span>
+                    <span class="stat-value" id="bestAccuracy">0%</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Round</span>
+                    <span class="stat-value" id="roundCount">1</span>
+                </div>
+            </div>
             <div class="tries-left" id="triesLeft">Tries Left: 20</div>
             <div class="accuracy" id="accuracy"></div>
+            <div class="progress-shell" aria-label="Game progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
             <div class="difficulty-badge" id="difficultyBadge">Easy Mode</div>
         </div>
 
@@ -573,6 +762,7 @@
         <div class="guess-section">
             <div class="section-title">Select the chord you hear:</div>
             <div class="chord-grid" id="chordGrid"></div>
+            <div class="shortcut-hint">Space plays the chord, Enter moves on after a guess, Escape returns to menu.</div>
         </div>
 
         <div id="feedbackContainer"></div>

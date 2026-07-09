@@ -16,6 +16,11 @@ class GameUI {
             total: document.getElementById('total'),
             accuracy: document.getElementById('accuracy'),
             triesLeft: document.getElementById('triesLeft'),
+            streak: document.getElementById('streak'),
+            bestScore: document.getElementById('bestScore'),
+            bestAccuracy: document.getElementById('bestAccuracy'),
+            roundCount: document.getElementById('roundCount'),
+            progressBar: document.getElementById('progressBar'),
             feedbackContainer: document.getElementById('feedbackContainer'),
             gameOverContainer: document.getElementById('gameOverContainer'),
             difficultyBadge: document.getElementById('difficultyBadge')
@@ -101,6 +106,7 @@ class GameUI {
                 button.textContent = chordName;
                 button.setAttribute('data-chord', chordName);
                 button.setAttribute('aria-label', `Guess chord ${chordName}`);
+                button.setAttribute('type', 'button');
                 button.addEventListener('click', () => onChordClick(chordName, button));
 
                 this.elements.chordGrid.appendChild(button);
@@ -122,7 +128,7 @@ class GameUI {
 
             buttons.forEach(btn => {
                 btn.disabled = false;
-                btn.classList.remove('correct', 'incorrect');
+                btn.classList.remove('correct', 'incorrect', 'revealed');
             });
         } catch (error) {
             console.error('Error resetting chord buttons:', error);
@@ -140,6 +146,33 @@ class GameUI {
             }
         } catch (error) {
             console.error('Error disabling chord buttons:', error);
+        }
+    }
+
+    /**
+     * Mark the guessed and correct chord buttons after a round
+     * @param {string} guessedChord - Chord guessed by user
+     * @param {string} correctChord - Actual chord
+     */
+    markChordResult(guessedChord, correctChord) {
+        try {
+            const buttons = this.elements.chordGrid?.querySelectorAll('.chord-btn');
+            if (!buttons) return;
+
+            buttons.forEach(btn => {
+                const chordName = btn.getAttribute('data-chord');
+                btn.classList.remove('correct', 'incorrect', 'revealed');
+
+                if (chordName === guessedChord && guessedChord === correctChord) {
+                    btn.classList.add('correct');
+                } else if (chordName === guessedChord) {
+                    btn.classList.add('incorrect');
+                } else if (chordName === correctChord) {
+                    btn.classList.add('revealed');
+                }
+            });
+        } catch (error) {
+            console.error('Error marking chord result:', error);
         }
     }
 
@@ -164,6 +197,22 @@ class GameUI {
             }
             if (this.elements.triesLeft && scoreData.triesLeft !== undefined) {
                 this.elements.triesLeft.textContent = `Tries Left: ${scoreData.triesLeft}`;
+            }
+            if (this.elements.streak && scoreData.streak !== undefined) {
+                this.elements.streak.textContent = scoreData.streak;
+            }
+            if (this.elements.bestScore && scoreData.bestScore !== undefined) {
+                this.elements.bestScore.textContent = scoreData.bestScore;
+            }
+            if (this.elements.bestAccuracy && scoreData.bestAccuracy !== undefined) {
+                this.elements.bestAccuracy.textContent = `${scoreData.bestAccuracy}%`;
+            }
+            if (this.elements.roundCount && scoreData.round !== undefined) {
+                this.elements.roundCount.textContent = scoreData.round;
+            }
+            if (this.elements.progressBar && scoreData.attempts !== undefined && scoreData.total) {
+                const progress = Math.min(100, Math.round((scoreData.attempts / scoreData.total) * 100));
+                this.elements.progressBar.style.width = `${progress}%`;
             }
         } catch (error) {
             console.error('Error updating score:', error);
@@ -214,15 +263,21 @@ class GameUI {
             if (typeof message !== 'string') return;
 
             const feedbackClass = isCorrect ? 'correct' : 'incorrect';
+            const nextButtonHtml = typeof onNext === 'function'
+                ? '<button class="next-btn next-feedback-btn" type="button">Next Chord →</button>'
+                : '';
+            const actionsHtml = nextButtonHtml
+                ? `<div class="feedback-actions">${nextButtonHtml}</div>`
+                : '';
 
             this.elements.feedbackContainer.innerHTML = `
                 <div class="feedback ${feedbackClass}">
                     ${message}
                 </div>
-                <button class="next-btn">Next Chord →</button>
+                ${actionsHtml}
             `;
 
-            const nextBtn = this.elements.feedbackContainer.querySelector('.next-btn');
+            const nextBtn = this.elements.feedbackContainer.querySelector('.next-feedback-btn');
             if (nextBtn && typeof onNext === 'function') {
                 nextBtn.addEventListener('click', onNext);
             }
@@ -247,8 +302,16 @@ class GameUI {
                 <h2>${gameOverData.message}</h2>
                 <p>Final Score: ${gameOverData.score} / ${gameOverData.total}</p>
                 <p>Accuracy: ${gameOverData.accuracy}%</p>
+                <p>Best Score: ${gameOverData.bestScore} / ${gameOverData.total}</p>
+                <p>Best Accuracy: ${gameOverData.bestAccuracy}%</p>
+                <p>Best Streak This Run: ${gameOverData.bestStreak}</p>
+                <p>Sessions Completed: ${gameOverData.sessionsPlayed}</p>
+                <div class="recommendation">
+                    <strong>Recommended next practice</strong>
+                    ${gameOverData.recommendation}
+                </div>
                 <button class="next-btn" id="playAgainBtn">Play Again (Same Difficulty)</button>
-                <button class="next-btn" id="backToMenuBtn" style="background: linear-gradient(135deg, #8b7c9e 0%, #6d5f7a 100%); box-shadow: 0 5px 0 #5a4d66, 0 9px 18px rgba(139, 124, 158, 0.4); margin-top: 10px;">Back to Menu</button>
+                <button class="next-btn secondary-action" id="backToMenuBtn">Back to Menu</button>
             `;
 
             this.elements.gameOverContainer.innerHTML = html;

@@ -49,6 +49,29 @@ class HintSystem {
     }
 
     /**
+     * Calculate upward interval from the correct chord root to the guess
+     * @param {string} guessedChord - Guessed chord
+     * @param {string} correctChord - Correct chord
+     * @returns {number} Interval in semitones (0-11)
+     */
+    getRootInterval(guessedChord, correctChord) {
+        try {
+            const guessedRoot = guessedChord.replace('m', '');
+            const correctRoot = correctChord.replace('m', '');
+
+            if (!this.semitoneMap.hasOwnProperty(guessedRoot) ||
+                !this.semitoneMap.hasOwnProperty(correctRoot)) {
+                throw new Error('Unknown chord root');
+            }
+
+            return (this.semitoneMap[guessedRoot] - this.semitoneMap[correctRoot] + 12) % 12;
+        } catch (error) {
+            console.error('Error calculating root interval:', error);
+            return -1;
+        }
+    }
+
+    /**
      * Count how many notes two chords share
      * @param {Array<number>} notes1 - Frequencies in chord 1
      * @param {Array<number>} notes2 - Frequencies in chord 2
@@ -99,12 +122,13 @@ class HintSystem {
             }
 
             const distance = this.getSemitoneDistance(guessedChord, correctChord);
+            const rootInterval = this.getRootInterval(guessedChord, correctChord);
             const guessNotes = chordData[guessedChord].notes;
             const correctNotes = chordData[correctChord].notes;
             const sharedNotes = this.countSharedNotes(guessNotes, correctNotes);
 
             // Priority-based hint decision tree
-            return this.selectHint(guessedChord, correctChord, distance, sharedNotes);
+            return this.selectHint(guessedChord, correctChord, distance, sharedNotes, rootInterval);
         } catch (error) {
             console.error('Error generating hint:', error);
             return {
@@ -118,7 +142,7 @@ class HintSystem {
      * Select hint based on analysis
      * @private
      */
-    selectHint(guessed, correct, distance, sharedNotes) {
+    selectHint(guessed, correct, distance, sharedNotes, rootInterval) {
         const guessRoot = guessed.replace('m', '');
         const correctRoot = correct.replace('m', '');
         const guessIsMinor = guessed.includes('m');
@@ -149,7 +173,7 @@ class HintSystem {
         }
 
         // Perfect 5th (dominant)
-        if (distance === 7) {
+        if (rootInterval === 7) {
             return {
                 hint: `🎵 Interesting! You heard the dominant (perfect 5th) of ${correct}. ${guessed} and ${correct} are closely related!`,
                 expression: 'lightbulb'
@@ -157,7 +181,7 @@ class HintSystem {
         }
 
         // Perfect 4th (subdominant)
-        if (distance === 5) {
+        if (rootInterval === 5) {
             return {
                 hint: `🎵 Good ear! You heard the subdominant (perfect 4th) of ${correct}. ${guessed} and ${correct} share a harmonic relationship!`,
                 expression: 'lightbulb'
